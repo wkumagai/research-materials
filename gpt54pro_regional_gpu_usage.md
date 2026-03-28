@@ -460,3 +460,200 @@ EuroHPCの既存AI/Data-Intensive accessでは、**1 cut-offあたり合計約1,
 
 ---
 
+## 3. 中国のGPU利用実態
+
+以下、**2026年3月28日時点**の公開情報ベースで、中国におけるAI用途GPU/AIアクセラレータ利用実態を、**米国輸出規制の影響**に焦点を当てて整理します。結論だけ先に言うと、**中国のAI計算需要そのものは強い**一方、利用先は「少数の大手クラウド/大手企業」に集中し、地方主導の新設センターには**20～30%稼働**の低利用案件も目立ちます。輸出規制は中国のAI開発を止めたというより、**NVIDIA最先端品への依存を崩し、国産チップ・異種混成クラスタ・GPU時貸し・海外リース・ソフト最適化**へと利用経路を変えました。中国の智能算力規模は2024年に**725.3 EFLOPS**、2025年予測で**1037.3 EFLOPS**まで拡大見通しです。 ([scjgj.beijing.gov.cn](https://scjgj.beijing.gov.cn/zwxx/mtjj/202502/t20250217_4013210.html))
+
+## 1. GPUの利用経路
+
+### 1-1. 中国国内クラウドのAI GPU市場シェア
+ここは**定義で順位が変わる**のが重要です。  
+- **IDCの2024年「AI public cloud services」**では、**Baidu AI Cloud と Alibaba Cloud が各約25%**で首位、続いてTencentとHuaweiでした。 ([scmp.com](https://www.scmp.com/tech/article/3322250/alibaba-baidu-lead-chinas-ai-cloud-boom-market-surges-55-us27-billion))  
+- **Omdiaの1H25「China AI Cloud Market」**（IaaS+PaaS+MaaS）では、**Alibaba 35.8%**、Volcano Engine 14.8%、**Huawei 13.1%**、**Tencent 7.0%**、**Baidu 6.1%**です。つまり「大模型クラウド全体」ではAlibaba優位です。 ([asiatechwire.com](https://www.asiatechwire.com/International-authoritative-report-Alibaba-Cloud-ranks-first-in-Chinas-AI-cloud-market-with-a-358-share.html))  
+- 一方、**Frost & Sullivanの1H25「国産GPUクラウド」**では、**Baidu 40.4%**、**Huawei 30.1%**で、両社合計が**70%超**でした。ここでは**自研チップからクラウドまでの垂直統合**が評価軸になっています。 ([datacenterdynamics.com](https://www.datacenterdynamics.com/en/news/baidu-and-huawei-account-for-70-of-chinas-gpu-cloud-market/))
+
+**要するに**、  
+- **輸入NVIDIA中心のAIクラウド全体**ではAlibabaが強い。  
+- **国産アクセラレータ前提のGPUクラウド**ではBaidu/Huaweiが強い。  
+という二重構造です。 ([asiatechwire.com](https://www.asiatechwire.com/International-authoritative-report-Alibaba-Cloud-ranks-first-in-Chinas-AI-cloud-market-with-a-358-share.html))
+
+### 1-2. 国産GPU/アクセラレータの性能比較（H100比）と導入実績
+まず注意点として、**H100比は単純比較が危険**です。NVIDIA公式のH100 BF16/FP16 1,979 TFLOPSには**sparsity込み**の値が含まれます。したがって、以下は**理論値ベースの概算**、または**公開された実運用情報**として読むのが安全です。 ([nvidia.com](https://www.nvidia.com/en-us/data-center/h100/))
+
+- **Huawei Ascend 910C**  
+  Huaweiは2025年3月公開の**Atlas 900超节点**について、**384カードで最大300 PFLOPS**、しかも**累計300セット超を20超の顧客に配備**と公表しています。これを単純に1カード当たりへ割り戻すと、H100のdense相当と比べて**ざっくり7～8割級**の理論水準になります。Huawei自身も、2025年4月末までに**Ascend 910B/910Cの推理能力が顧客の基本要求に到達した**と説明しています。中国国内で**唯一、大規模商用配備が明確に見える国産AIアクセラレータ**です。 ([huawei.com](https://www.huawei.com/cn/news/2025/9/hc-xu-keynote-speech))
+
+- **Biren BR100**  
+  BirenのHot Chips資料では、**BF16 1,024 TFLOPS**が示されており、理論値だけなら**H100 dense相当級**です。ただし、実運用の成否はCUDA互換、分散学習、供給制約に大きく左右され、**Huaweiほど大規模な商用導入台数は公開されていません**。IPO関連報道では、**千卡級集群案件**や通信・データセンター顧客との案件は示されるものの、公開ソースで検証できる配備量はまだ限定的です。 ([hc34.hotchips.org](https://www.hc34.hotchips.org/assets/program/conference/day1/GPU%20HPC/HC2022.BirenTech.MikeHong.LingjieXu.v01.pdf))
+
+- **Moore Threads MTT S4000**  
+  Moore Threads公式仕様は**48GB GDDR6、768GB/s、FP16/BF16 100 TFLOPS**で、H100 dense比では**約1割**の理論水準です。他方で同社は、**千卡級のKUAEクラスタ**を早くから商用訴求しており、2025年には**万卡級智算集群**対応を前面に出しています。つまり単カード性能より、**国産クラスタ運用基盤**としての位置付けが強いです。 ([docs.mthreads.com](https://docs.mthreads.com/s4000/s4000-doc-online/product_specifications/))
+
+- **Cambricon MLU370-X8**  
+  Cambricon公式仕様は**48GB LPDDR5、614.4GB/s、FP16/BF16 96 TFLOPS**で、H100 dense比では**約1割**です。公式には「**4つの一般的AIモデルで主流350W RTX GPU相当**」と説明しており、前線の大規模学習よりは、**推論や特定業務向け**の色が濃いです。大規模配備台数は公開情報がかなり薄いです。 ([cambricon.com](https://cambricon.com/index.php?a=lists&c=index&catid=406&m=content))
+
+- **補足: Baidu Kunlun**  
+  ユーザー指定外ですが、中国の現場実装では重要です。Baiduは2025年に**3万～3.2万卡規模の昆仑芯P800集群**を点灯・実運用したと自社イベントで説明しており、IDCベースでは**Kunlunxinの2024年出荷が約7万枚**と報じられています。中国の国産AIチップで、**Huaweiに次ぐ“数量が見える”実装**です。 ([cloud.baidu.com](https://cloud.baidu.com/news/news_f7c48617-386d-4e57-a88f-e7e16c5b7693))
+
+### 1-3. 地方政府の計算プラットフォーム
+主要都市では、政府や国資が**公共算力平台**を整備し、大学・研究機関・中小企業に貸し出す形が定着しています。 ([kw.beijing.gov.cn](https://kw.beijing.gov.cn/xwdt/kcyx/xwdtshgg/202401/t20240110_3817157.html))
+
+- **北京**  
+  2024年1月の**北京人工智能公共算力平台（上庄）**は**一期500P**で、大学・科研院所・中小企業向け普惠サービスとして開始しました。2024年3月には**亦庄AI公共算力平台**が**3000P**で点灯し、北京市は2025年Q2に**2つの万卡智算集群**建設を進めると公表しています。 ([kw.beijing.gov.cn](https://kw.beijing.gov.cn/xwdt/kcyx/xwdtshgg/202401/t20240110_3817157.html))
+
+- **上海**  
+  上海は2025年7月の市政策で**6億元の算力券**を出しつつ、**上海市智能算力公共服务平台**を整備しています。上海超级计算中心が運営する公共平台は**100 PFLOPS（FP16）**の国産算力を掲げ、別の市公式記事では、上海儀電系の公共平台群が**“複数の万卡集群”**を建成済みと紹介されています。市としては2025年までに**100 EFLOPS**を目標にしています。 ([sheitc.sh.gov.cn](https://sheitc.sh.gov.cn/cmsres/3e/3ea46b718d084ec080672b09428642a1/8cea381294498b9a97300a9428f88e9f.pdf))
+
+- **深圳**  
+  深圳の2025–2026行動計画は、2026年までに**实时可用智能算力 80 EFLOPS超**を目標にし、**1ms都市算网・3ms韶关算网・10ms贵安算网**を掲げています。2025年3月には**深智城3000 PFLOPS智算中心**が稼働し、同月に**深圳（東部）人工智能产业公共服务平台**の**一期千卡集群**も点灯しました。 ([sz.gov.cn](https://www.sz.gov.cn/szzt2010/zdlyzl/jjshzc/content/post_12052815.html))
+
+### 1-4. 大学・研究機関の計算資源
+大学では、**自前HPC**と**GPUカード時サービス調達**の併用が進んでいます。 ([hpcc.cs.tsinghua.edu.cn](https://hpcc.cs.tsinghua.edu.cn/jszy/yjzy.htm))
+
+- **清華大学**  
+  清華大学高性能計算センターの**開拓1000**は、**91 GPUノード・728 GPUカード**で、内訳は**87ノード×8 A800 + 4ノード×8 H800**です。旧システムにも**10ノード×8 V100**があります。 ([hpcc.cs.tsinghua.edu.cn](https://hpcc.cs.tsinghua.edu.cn/jszy/yjzy.htm))
+
+- **北京大学**  
+  北京大学高性能計算平台の共有系だけでも、**GPUカード40枚**（P100/V100混在）が公開されています。別系統では、北京大学医学系・AI4Drug系で**8×A800**やA100系の個別クラスタも見えます。 ([hpc.pku.edu.cn](https://hpc.pku.edu.cn/resource.html))
+
+- **中科院系**  
+  中科院全体の統一集計は見つけにくいですが、研究所単位では比較的大きいGPU保有が確認できます。たとえば**中科院上海免疫与感染研究所**の高性能計算機集群は**3090/A40/A100系GPUノード28台**、**中科院生物物理所**の生物成像中心は**8×A100 40GB**構成を公開しています。さらに**中科院計算机网络信息中心**は2025年に**中国科技云GPU服务器6套**を追加調達しました。 ([siii.cas.cn](https://siii.cas.cn/kyzc/yqss/djpt/202403/t20240308_7021178.html))
+
+### 1-5. 国のスパコン（天河、曙光等）
+この領域は**公開度が低い**です。現時点で確実に言えるのは、**国家超算天津中心（天河）**は「天河一号」「天河新一代」を保有し、**超算・智算・大规模数据管理の三位一体**で、**双百亿亿級能力**から**三百亿亿級能力**へ拡張中だということです。また、天河系の**多模态千亿参数模型公共服务平台**は**E級の混合精度算力**を提供するとされています。公式サイトには**GPU集群**と**人工智能环境**の専用ページもありますが、**現在のAI向けGPUカード枚数までは開示していません**。 ([teda.gov.cn](https://www.teda.gov.cn/contents/14/25755.html))
+
+補助情報として、中国国家网格の公開メタデータでは、**天津のGPUサブシステムが約3.7 PF GPU**、**深圳国家超算中心が約1.3 PF GPU**と整理されていますが、これはフルシステムではなく共有GPU資源側の数字とみるのが妥当です。 ([cngrid.org](https://www.cngrid.org/hjjs/wjccxx/))
+
+**曙光（Sugon）**については、古典的な国家超算というより、2025年に**96アクセラレータ/ラック**・**百万卡拡張対応**の**AI超集群**を前面に出しており、中国のAI用途では「超算」より**AIスーパー・クラスタ**の文脈で見るほうが実態に合います。 ([semi.org.cn](https://www.semi.org.cn/site/semi/article/f888da1fd41e4916bc157281ceac7d23.html))
+
+### 1-6. 企業オンプレの推定GPU保有台数
+ここは**公開下限**と**強い推定**を分けるべきです。中国企業は正確なカード枚数を開示しないことが多いです。 ([arxiv.org](https://arxiv.org/abs/2509.16293))
+
+- **ByteDance**  
+  arXiv上のByteDance論文の要約では、本番GPUプラットフォームが**20万GPU超**と示されています。加えてSCMP報道では、ByteDanceは**約1000億元相当のチップを備蓄**し、そのうち**1割未満**をVolcano Engine経由で外販しているとされます。中国で最も大きいAI GPU保有者の一つとみてよいです。 ([arxiv.org](https://arxiv.org/abs/2509.16293))
+
+- **Baidu**  
+  Baiduは自社イベントで**3万～3.2万卡の昆仑芯クラスタ**を点灯・実用化したと説明しています。これは**公開確認できる中国企業オンプレの大規模国産クラスタ**の代表例です。 ([cloud.baidu.com](https://cloud.baidu.com/news/news_f7c48617-386d-4e57-a88f-e7e16c5b7693))
+
+- **Alibaba**  
+  AlibabaはHPCA 2026の業界発表で、**5年間安定運用されている1万GPU超クラスタ**を前提にしたeGPUフレームワークを公表しています。総保有枚数は未公開ですが、**“1万GPU超の本番クラスタ”が存在**するのは確定です。さらにAlibabaは**今後3年で3800億元**をAI・クラウド基盤に投じると発表しており、保有量はなお増える方向です。 ([2026.hpca-conf.org](https://2026.hpca-conf.org/details/hpca-2026-industry-track/3/eGPU-Production-Scale-Elastic-Sharing-over-10-000-GPUs))
+
+- **Tencent**  
+  Tencentは正確なカード枚数を開示していません。ただし、公式資料では**AI cloud revenueがFY24に約2倍**、**Q4 2024からGPU調達を加速**と述べ、同時に**星脉ネットワーク2.0が10万卡級に対応**する設計であることが広く報じられています。他方、2025年Q3には**GPU調達制約でcapexが130億元へ低下**したとも説明しており、**大規模インフラは用意しているが、チップ供給制約を受けた**という見方が妥当です。 ([static.www.tencent.com](https://static.www.tencent.com/uploads/2025/03/19/f55938d61be94cf9700a971a4db08809.pdf))
+
+---
+
+## 2. 資金源
+
+### 2-1. 算力券（compute vouchers）
+中国のAI算力支援で最も実務上効いているのは、中央研究費よりむしろ**地方の算力券/训力券**です。2024年時点で公式整理でも**10余城市**が確認され、2025年には制度がさらに広がっています。浙江省の2025年通知では、**国家人工智能券（算力券）が超長期特別国債資金を使う試点政策**だと明示されています。 ([xxzx.fj.gov.cn](https://xxzx.fj.gov.cn/jjxx/xxhdt/202404/t20240424_6438610.htm))
+
+**公的文書で詳細を確認できた代表例**は次の通りです。  
+- **上海**: 2025年7月の市措置で**算力券6億元**、**模型券3億元**、**語料券1億元**。算力券は**市級で家賃補助最大30%**、市区協同で**最長1年・最大100%**まで上積み可。 ([sheitc.sh.gov.cn](https://sheitc.sh.gov.cn/cmsres/3e/3ea46b718d084ec080672b09428642a1/8cea381294498b9a97300a9428f88e9f.pdf))  
+- **深圳**: **毎年最大5億元の“训力券”**、**最大1億元の模型券**、**最大5000万元の語料券**。大模型訓練向けは**契約額の50%まで、最大1000万元**、初創企業は**60%**まで。2025年3月の初回配布は**約2億元**で約40社が受領。さらに深圳市は**2025年に市区合計45億元の政策資金**を用意すると公表。 ([sz.gov.cn](https://www.sz.gov.cn/zfgb/zcjd/content/post_11932960.html))  
+- **北京経開区（亦庄）**: **毎年1億元の算力券**、通常**30%**、国産算力なら**40%**まで、**年上限2000万元**。モデル券も別途**1億元/年**。 ([beijing.gov.cn](https://www.beijing.gov.cn/zhengce/zhengcefagui/202406/t20240613_3711893.html))  
+- **寧波**: 2025実施細則で、四半期ごとの該当費用に対し**50%を算力券で発行**。 ([qf.ningbo.gov.cn](https://qf.ningbo.gov.cn/qfpt/fwbk/sjfw/rmzx/art/2025/art_86c0b9ae347245b3920c8d56f3052c9c.html))  
+- **重慶**: 2025年の算力券は**実際の算力サービス金額の20%**補助。 ([cq.gov.cn](https://www.cq.gov.cn/ywdt/jrcq/202508/t20250831_14950848.html))  
+- **無錫**: **毎年5000万元**の算力券予算。 ([wuxi.gov.cn](https://www.wuxi.gov.cn/doc/2024/02/29/4186695.shtml))  
+- **呼和浩特**: **毎年5000万元**の算力券。 ([nea.gov.cn](https://www.nea.gov.cn/20250718/410e42d872e4417687cb5b0ab357d088/c.html))  
+- **余杭区**: **毎年最高5000万元の算力券**、同額の模型券もあり。 ([yuhang.gov.cn](https://www.yuhang.gov.cn/art/2025/2/21/art_1532133_59131954.html))  
+- **武漢**: 中小企業向け**千万元級算力券**、垂直モデルには**年最大1000万元補助**。 ([wuhan.gov.cn](https://www.wuhan.gov.cn/zwgk/xxgk/zcjd/mtzj/202502/t20250219_2535934.shtml))  
+- **珠海**: **総額最大5億元の算力券**を計画し、备案済み生成AI企業では**60%支援**まで引上げ。 ([gdstc.gd.gov.cn](https://gdstc.gd.gov.cn/kjzx_n/gdkj_n/content/post_4684544.html))
+
+### 2-2. NSFC・MOST
+- **NSFC**  
+  国家自然科学基金委の2025年度予算では、**自然科学基金項目予算が394.58億元**で、前年比**+8.65%**です。AI専用ではありませんが、大学・研究所のGPU購入/クラウド利用の原資としては重要です。 ([nsfc.gov.cn](https://www.nsfc.gov.cn/Portals/0/fj/fj20250326_01.pdf))  
+- **MOST（科技部）**  
+  科技部の2025年度一般公共予算支出は**118.48億元**。うち**基礎研究**が**37.76億元**で、前年比**+80%**でした。これもAI専用ではありませんが、AI for Science・計算資源整備に波及します。 ([most.gov.cn](https://www.most.gov.cn/xxgk/xinxifenlei/fdzdgknr/bmyjs/202503/P020250326559263483414.pdf))
+
+### 2-3. 地方政府AI予算・基金
+- **上海**は、公式報道で**225億元の人工智能母基金**、**600億元の国家AI大基金**、**100億元のAI生態基金**を紹介しており、**ほぼ1000億元級**の資本支援基盤を形成しています。加えて2026年2月時点で、算力券・語料券・模型券の年間配布は**10億元超**と説明しています。 ([shanghai.gov.cn](https://www.shanghai.gov.cn/nw4411/20250407/3cd35fd60b4c47c7982e79d09a83c110.html))  
+- **深圳**は2025年に**45億元の政策資金**を用意し、同時に**百億基金投資生態**の構築も打ち出しています。 ([m.cyol.com](https://m.cyol.com/gb/articles/2025-02/23/content_nypYR0Fey9.html))  
+- **北京経開区**は算力券・模型券で**各1億元/年**を出し、さらにAI算力中心単体プロジェクトとして**127億元投資・2000P**規模案件も推進しています。 ([beijing.gov.cn](https://www.beijing.gov.cn/zhengce/zhengcefagui/202406/t20240613_3711893.html))
+
+### 2-4. 企業R&D/AI投資
+- **Alibaba**は2025年2月、**今後3年で3800億元**をクラウド・AIハード基盤に投じると発表しました。これは同社の過去10年のクラウド/AI投資総額を上回る水準です。 ([english.news.cn](https://english.news.cn/20250224/e289b92275a64a22a9f9ceba843687d9/c.html))  
+- **Tencent**は2025年Q1のcapexが**275億元**、Q2が**191億元**。2024年通期資料では、**AI cloud revenueが前年比約2倍**、Q4 2024から**GPU購入を積み増した**と説明しています。 ([static.www.tencent.com](https://static.www.tencent.com/uploads/2025/05/16/2af4e73edd208df236dadd8b9df89fc4.pdf))  
+- **ByteDance**はReutersベースで、2025年capexが**1500億元超**、その多くがAI向けと報じられています。 ([investing.com](https://www.investing.com/news/stock-market-news/exclusivebytedance-plans-20-billion-capex-in-2025-mostly-on-ai-sources-say-3826261))
+
+### 2-5. VC/スタートアップ資金
+OECDの2026年政策ブリーフでは、**2025年に中国のAI企業が受けたVC投資額は139億ドル（世界の約5%）**、一方で**中国投資家による対AI投資の“発信”側は172億ドル（世界の約8%）**でした。AI VCの世界シェアでは米国に大きく劣るものの、中国はなお**世界第3～4位級のAI資本市場**です。 ([oecd.org](https://www.oecd.org/en/publications/venture-capital-investments-in-artificial-intelligence-through-2025_a13752f5-en/full-report.html))
+
+---
+
+## 3. 政府施策・独自の取り組み
+
+### 3-1. 東数西算（East Data West Computing）
+「東数西算」は2022年に始まり、現在は**8つの国家枢纽节点**と**10の国家データセンター集群**を核に進んでいます。2025年9月時点で、公式報道は**社会投資1兆元超**、**14省をカバー**としています。2023年末の実施意見では、2025年末までに**全国一体化算力网**の基本形を作る目標が示され、2025年5月の**算力互联互通行动计划**では、2026年までの標準整備、2028年までの全国公共算力標準接続が掲げられました。 ([gov.cn](https://www.gov.cn/zhengce/zhengceku/202401/content_6924596.htm))
+
+2025年6月末時点では、中国の**在用算力中心標準ラック数は1085万架**、**智能算力は788 EFLOPS**、平均**PUEは1.42**まで低下しています。つまり、量だけでなく**電力効率・広域接続・標準化**へ政策軸が移っています。 ([caheb.gov.cn](https://www.caheb.gov.cn/system/2025/08/25/030355687.shtml))
+
+### 3-2. 国産GPU推進政策
+最も明確な公的義務付けは、**上海の智算基盤行動方案**です。ここでは**2025年までに新建智算中心の国産算力チップ比率を50%以上**、国産ストレージも50%以上にすると明記しています。北京経開区も、算力券で**国産算力は40%補助**、非国産は30%補助と差を付けています。つまり「国産化」は、**補助条件と公共施設の調達条件**を通じて進められています。 ([tjdsj.tjcac.gov.cn](https://tjdsj.tjcac.gov.cn/tjsg/202404/t20240408_6593787.html))
+
+### 3-3. 米国輸出規制の影響
+米BISの2022/2023年規制で、A100/H100に加えA800/H800なども対象化されました。さらにNVIDIAのSEC開示によれば、**2025年4月9日にはH20も中国向け輸出にライセンスが必要**になりました。ところがNVIDIAは**2025年7月14日にH20販売再開へ向けた申請と、ライセンス付与の保証を受けた**と公表しています。つまり、中国企業から見ると、問題は単に「禁止」ではなく、**ルールが非常に不安定**なことです。 ([bis.doc.gov](https://www.bis.doc.gov/index.php/policy-guidance/advanced-computing-and-semiconductor-manufacturing-items-controls-to-prc))
+
+### 3-4. H100/A100入手難後の代替戦略
+中国側の対応はだいたい5つです。  
+1. **規制準拠品の前倒し確保**: H20の大量発注・在庫化。  
+2. **企業間の二次市場化**: 2025年にはTencentとAlibabaが**ByteDance備蓄GPUを買った**と報じられました。 ([scmp.com](https://www.scmp.com/tech/big-tech/article/3308254/tencent-alibaba-buy-nvidia-gpus-bytedance-stockpile-report-says))  
+3. **国産チップへの垂直統合**: Baidu/Kunlun、Huawei/Ascend、Baidu/Huaweiの国産GPUクラウド支配が象徴的です。 ([datacenterdynamics.com](https://www.datacenterdynamics.com/en/news/baidu-and-huawei-account-for-70-of-chinas-gpu-cloud-market/))  
+4. **海外データセンター経由のリース**: SemiAnalysisは、中国プレイヤーが**非規制国での計算リース**を使っていると指摘しています。 ([semianalysis.com](https://semianalysis.com/2025/09/08/huawei-ascend-production-ramp/))  
+5. **ソフト/アルゴリズム最適化**: AlibabaはAegaeonで**GPU消費82%削減**、Tencentは**同じチップでより多くの推論を載せるソフト改善**を明言しています。 ([alibabacloud.com](https://www.alibabacloud.com/blog/602623))
+
+### 3-5. GPU稼働率30%問題
+中国では、地方主導でAIデータセンター建設が先行した結果、**新設センターの一部は20～30%稼働**に留まり、MIT Technology ReviewやReuters系報道でも**新規容量のかなりの部分が遊休化**したと整理されています。背景は、  
+- 東部需要に対して西部立地が多く**遅延面で不利**、  
+- 多くのセンターが**推論需要より訓練需要を過大評価**、  
+- ラック電力密度が低く、最先端学習に必要な**40kW超級要件を満たせない**案件がある、  
+- 異種混成ハードのため**使い勝手が悪い**、  
+という構造です。 ([tomshardware.com](https://www.tomshardware.com/desktops/servers/china-is-developing-nation-spanning-network-to-sell-surplus-data-center-compute-power-latency-disparate-hardware-are-key-hurdles))
+
+### 3-6. GPU価格70%下落の背景
+中国の算力レンタル市場では、Sinaが引用した市場レポートで、**H100のGPU時間単価が2023年初の約8ドルから2025年半ばには約2.4ドルへ下がり、70%超下落**したとされます。A800/H800/H20系も下落傾向です。背景は、  
+- 地方主導の**供給先行**、  
+- DeepSeek型の**低計算コスト学習**で“必要GPU時間”の見積もりが下方修正、  
+- 需要が「基盤モデル訓練」から「推論」へ移り、旧式訓練リグの価格決定力が低下、  
+- クラウド/プーリング/スケジューリングで**実効利用率が上がった**、  
+ことです。 ([finance.sina.cn](https://finance.sina.cn/2025-06-20/detail-infatrka6078972.d.html))
+
+---
+
+## 4. 研究者のGPU調達パターン
+
+### 4-1. 中国の研究者はどうGPUを使うか
+研究者の利用パターンは、今や**「GPUを買う」より「GPU時間を確保する」**に寄っています。具体的には、  
+- **校内HPC**を使う（清華728枚、北大40枚公開分など）、  
+- **大学名義でGPUカード時を外部調達**する、  
+- **公共算力平台**を使う、  
+- **算力券/训力券でクラウド費用を落とす**、  
+- 企業と共同で**異種混成クラスタ**へ載せる、  
+の5ルートです。 ([hpcc.cs.tsinghua.edu.cn](https://hpcc.cs.tsinghua.edu.cn/jszy/yjzy.htm))
+
+### 4-2. 算力券の実際の利用体験
+北京の官方記事では、大模型企業CEOが**以前は“あちこちでGPUカードをかき集めていた”**が、公共算力平台により**安定した算力**を得られるようになったと述べています。Tsinghuaは2024年に、気象・時系列・強化学習研究向けに**541,440カード時**の高性能GPU算力サービスを外部調達しました。中科院地球化学研究所も2025年に**GPU机时服务**を調達しています。これは、研究現場が**所有からサービス契約へ**寄っていることを示します。 ([beijing.gov.cn](https://www.beijing.gov.cn/ywdt/gzdt/202403/t20240330_3606130.html))
+
+### 4-3. 輸出規制による研究への影響
+輸出規制の研究現場への影響は、**“研究が止まる”より“研究の組み方が変わる”**という形です。大学・研究所は、最先端GPUの自前増設よりも、**共有平台・外部GPU時間・国産チップ適配**へ動いています。深圳の训力券は**高校・科研机构も対象**ですし、浙江の国家AI券も**サービス契約ベース**です。企業側でもTencentは、**GPU不足をソフト改善で補う**と説明しています。 frontier級の基盤モデル事前学習は、公開情報を見る限り、大学より**ByteDance/Baidu/Alibaba/Tencent/Huaweiの企業クラスタ**へ一段と集中しています。 ([sz.gov.cn](https://www.sz.gov.cn/zfgb/zcjd/content/post_11932960.html))
+
+---
+
+## 総括
+中国のAI用途GPU利用実態を一言で言うなら、**「需要は強いが、使われ方が二極化している」**です。  
+- **上位層**では、Alibaba/Baidu/Huawei/ByteDance/Tencentが、国産・輸入・異種混成を組み合わせた**大規模クラスタ**を運用。  
+- **中間層**では、地方政府の公共算力平台と算力券が、中小企業・大学・研究機関の入口になっている。  
+- **下位層**では、過剰建設された地方センターが、**20～30%稼働**や**価格崩れ**に直面している。 ([asiatechwire.com](https://www.asiatechwire.com/International-authoritative-report-Alibaba-Cloud-ranks-first-in-Chinas-AI-cloud-market-with-a-358-share.html))
+
+米国輸出規制は、H100/A100の不足を通じて中国のAIを減速させましたが、同時に、**国産チップの実装、公共算力市場、異種混成ソフト、海外リース、推論効率化**を一気に前進させました。したがって、中国のAI GPU問題は「量が足りるか」より、今は**“どの層に、どの品質の算力が、どのコストで届くか”**が本質です。 ([sec.gov](https://www.sec.gov/Archives/edgar/data/1045810/000104581025000116/nvda-20250427.htm))
+
+補足すると、**Biren/Cambriconの正確な大規模導入台数**や、**天河/曙光系のAI向けGPUカード枚数の最新内訳**、**“30都市超”の算力券を完全網羅した単一公式台帳**は、公開ソースでは透明性が高くありません。必要なら次に、  
+1. **都市別の算力券一覧表**、  
+2. **企業別GPU保有下限/推定レンジ表**、  
+3. **輸出規制年表（2022→2026）**  
+の3つに分けて、さらに深掘りできます。
+
+[ERROR: Query terminated after 2510.8s: Rate limit reached for gpt-5.4-pro (for limit gpt-5.4-pro-long-context) in organization org-iFKQWRIi6HMKTiyZPcWpUVRi on tokens per min (TPM): Limit 10000000, Used 9636469, Requested 369457. Please try again in 35ms. Visit https://platform.openai.com/account/rate-limits to learn more.]
+
+---
+
