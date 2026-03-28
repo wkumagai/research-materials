@@ -1,16 +1,17 @@
 #!/usr/bin/env python3
 """
 AIXS Comprehensive Analysis via GPT-5.4-pro Responses API with web_search_preview.
-Uses STREAMING to keep connections alive during long reasoning phases.
-Runs 7 queries sequentially, saves progress incrementally.
+Runs 7 queries sequentially (to avoid rate limits), combines into single markdown.
+
+Usage: PYTHONUNBUFFERED=1 python3 run_gpt54pro_analysis.py
 """
 
 import json
 import os
-import re
 import sys
 import time
 from datetime import datetime
+from pathlib import Path
 
 # Force unbuffered output
 sys.stdout.reconfigure(line_buffering=True)
@@ -21,6 +22,9 @@ from openai import OpenAI
 
 API_KEY = os.environ.get("OPENAI_API_KEY", "")
 
+# gpt-5.4-pro with web_search_preview can take 5-10 minutes per query
+# due to multiple sequential web searches + reasoning steps.
+# Set read timeout to 30 minutes to be safe.
 client = OpenAI(
     api_key=API_KEY,
     timeout=httpx.Timeout(connect=60.0, read=1800.0, write=60.0, pool=60.0),
@@ -86,7 +90,7 @@ def log(msg):
 
 
 def extract_citations_from_response(response):
-    """Extract URL citations from Responses API output (annotation objects)."""
+    """Extract URL citations from Responses API output."""
     citations = []
     if hasattr(response, 'output') and response.output:
         for item in response.output:
@@ -101,87 +105,49 @@ def extract_citations_from_response(response):
     return citations
 
 
-def extract_citations_from_text(text):
-    """Extract URL citations embedded in markdown text as ([title](url)) or [title](url)."""
-    citations = []
-    seen = set()
-    # Match markdown links: [title](url)
-    for match in re.finditer(r'\[([^\]]*)\]\((https?://[^\s\)]+)\)', text):
-        title = match.group(1)
-        url = match.group(2)
-        if url not in seen:
-            seen.add(url)
-            citations.append({"url": url, "title": title})
-    return citations
+def get_output_text(response):
+    """Extract text from Responses API output."""
+    if hasattr(response, 'output_text') and response.output_text:
+        return response.output_text
+    texts = []
+    if hasattr(response, 'output') and response.output:
+        for item in response.output:
+            if hasattr(item, 'content') and item.content:
+                for content_block in item.content:
+                    if hasattr(content_block, 'text') and content_block.text:
+                        texts.append(content_block.text)
+    return "\n".join(texts) if texts else ""
 
 
-def run_query_streaming(query_info):
-    """Run a single query using streaming to keep connection alive.
-
-    Streaming is essential for gpt-5.4-pro with web_search_preview because:
-    - The reasoning phase can take 10-20 minutes before any output
-    - Without streaming, the HTTP connection may time out or be killed
-    - Streaming provides keepalive events during the reasoning phase
-    """
+def run_query(query_info):
+    """Run a single query using the Responses API with web_search_preview."""
     log(f"Starting: {query_info['title']}")
     start = time.time()
 
     try:
-        stream = client.responses.create(
+        response = client.responses.create(
             model=MODEL,
             tools=[{"type": "web_search_preview"}],
             input=query_info["prompt"],
-            stream=True,
         )
 
-        event_count = 0
-        search_count = 0
-        text_parts = []
-        usage_info = {"input": 0, "output": 0, "total": 0}
-        completed_response = None
-
-        for event in stream:
-            event_count += 1
-            etype = getattr(event, 'type', 'unknown')
-
-            if etype == 'response.output_text.delta':
-                delta = getattr(event, 'delta', '')
-                if delta:
-                    text_parts.append(delta)
-            elif etype == 'response.web_search_call.completed':
-                search_count += 1
-                elapsed = time.time() - start
-                log(f"  Web search #{search_count} completed ({elapsed:.0f}s)")
-            elif etype == 'response.completed':
-                elapsed = time.time() - start
-                log(f"  Response completed ({elapsed:.0f}s, {event_count} events, {search_count} searches)")
-                completed_response = getattr(event, 'response', None)
-
         elapsed = time.time() - start
-        content = ''.join(text_parts)
+        log(f"  Completed in {elapsed:.1f}s")
 
-        # Try to get citations from the completed response object first
-        citations = []
-        if completed_response:
-            citations = extract_citations_from_response(completed_response)
-            # Get usage info
-            if hasattr(completed_response, 'usage') and completed_response.usage:
-                u = completed_response.usage
-                usage_info = {
-                    "input": getattr(u, 'input_tokens', 0) or 0,
-                    "output": getattr(u, 'output_tokens', 0) or 0,
-                    "total": (getattr(u, 'input_tokens', 0) or 0) + (getattr(u, 'output_tokens', 0) or 0),
-                }
-            # If no content from deltas, try output_text
-            if not content and hasattr(completed_response, 'output_text'):
-                content = completed_response.output_text or ""
+        content = get_output_text(response)
+        citations = extract_citations_from_response(response)
 
-        # Fallback: extract citations from the text itself (markdown links)
-        if not citations and content:
-            citations = extract_citations_from_text(content)
+        usage_info = {"input": 0, "output": 0, "total": 0}
+        if hasattr(response, 'usage') and response.usage:
+            usage = response.usage
+            usage_info = {
+                "input": getattr(usage, 'input_tokens', 0) or 0,
+                "output": getattr(usage, 'output_tokens', 0) or 0,
+                "total": (getattr(usage, 'input_tokens', 0) or 0) + (getattr(usage, 'output_tokens', 0) or 0),
+            }
+            log(f"  Tokens - input: {usage_info['input']}, output: {usage_info['output']}, total: {usage_info['total']}")
 
-        log(f"  Tokens - input: {usage_info['input']}, output: {usage_info['output']}, total: {usage_info['total']}")
-        log(f"  Content: {len(content)} chars, Citations: {len(citations)}, Searches: {search_count}")
+        log(f"  Content length: {len(content)} chars, Citations: {len(citations)}")
 
         return {
             "id": query_info["id"],
@@ -196,7 +162,7 @@ def run_query_streaming(query_info):
         elapsed = time.time() - start
         log(f"  ERROR after {elapsed:.1f}s: {type(e).__name__}: {e}")
         import traceback
-        traceback.print_exc(file=sys.stderr)
+        traceback.print_exc()
         return {
             "id": query_info["id"],
             "title": query_info["title"],
@@ -300,7 +266,7 @@ def load_progress():
 
 
 def main():
-    log("AIXS Comprehensive Analysis - GPT-5.4-pro (STREAMING MODE)")
+    log("AIXS Comprehensive Analysis - GPT-5.4-pro Responses API with web_search_preview")
     log(f"Model: {MODEL}")
     log(f"Queries: {len(QUERIES)}")
 
@@ -317,7 +283,7 @@ def main():
             log(f"Skipping already completed: {query_info['title']}")
             continue
 
-        result = run_query_streaming(query_info)
+        result = run_query(query_info)
         results.append(result)
 
         # Save progress after each query
@@ -328,9 +294,9 @@ def main():
         md = build_markdown(sorted(results, key=lambda r: r["id"]))
         with open(OUTPUT_PATH, "w", encoding="utf-8") as f:
             f.write(md)
-        log(f"  Intermediate markdown saved")
+        log(f"  Intermediate markdown saved to {OUTPUT_PATH}")
 
-        # Small delay between queries
+        # Small delay between queries to be polite to rate limits
         if query_info["id"] < len(QUERIES):
             log("  Waiting 5s before next query...")
             time.sleep(5)

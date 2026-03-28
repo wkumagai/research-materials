@@ -1,87 +1,79 @@
 #!/usr/bin/env python3
 """
-Call GPT-5.4-pro via OpenAI Responses API for GPU cost comparison.
-Uses multiprocessing for hard 600s timeout per call.
-Falls back to o3 then gpt-4.1 if gpt-5.4-pro times out.
+Call GPT-5.4-pro via OpenAI Responses API to create a detailed
+researcher-realistic GPU cost comparison across all direct competitors.
+Runs 4 queries sequentially. Uses httpx timeout of 600s.
+Falls back to o3 after 600s timeout on gpt-5.4-pro.
 """
 
 import os
 import sys
 import time
-import multiprocessing
-from multiprocessing import Process, Queue
+import httpx
+from openai import OpenAI
 
 API_KEY = os.environ.get("OPENAI_API_KEY", "")
-PRIMARY_MODEL = 'gpt-5.4-pro'
-FALLBACK_MODELS = ['o3', 'gpt-4.1']
+MODEL = 'gpt-5.4-pro'
 OUTPUT_PATH = '/Users/kumacmini/research-materials/gpt54pro_price_comparison.md'
-TIMEOUT_SECONDS = 600
 
+# Set 600s timeout on the HTTP client
+custom_httpx = httpx.Client(timeout=httpx.Timeout(600.0, connect=30.0))
+client = OpenAI(api_key=API_KEY, http_client=custom_httpx)
 
-def _worker(model, query, result_queue):
-    """Worker process that calls the API and puts result in queue."""
-    from openai import OpenAI
+def call_with_fallback(query, label):
+    """Try gpt-5.4-pro first, fall back to o3 if it times out."""
+    start = time.time()
+    model_used = MODEL
+
     try:
-        client = OpenAI(api_key=API_KEY)
+        print(f"  Calling {MODEL}...", flush=True)
         response = client.responses.create(
-            model=model,
+            model=MODEL,
             tools=[{'type': 'web_search_preview'}],
             input=query,
         )
-        result_queue.put(('ok', response.output_text))
-    except Exception as e:
-        result_queue.put(('error', str(e)))
-
-
-def call_model_with_timeout(model, query, timeout=TIMEOUT_SECONDS):
-    """Call a model in a subprocess with hard timeout."""
-    q = Queue()
-    p = Process(target=_worker, args=(model, query, q))
-    p.start()
-    p.join(timeout=timeout)
-
-    if p.is_alive():
-        p.terminate()
-        p.join(5)
-        if p.is_alive():
-            p.kill()
-            p.join(5)
-        return None, f"Timed out after {timeout}s"
-
-    if not q.empty():
-        status, data = q.get_nowait()
-        if status == 'ok':
-            return data, None
-        else:
-            return None, data
-    else:
-        return None, "No result from worker"
-
-
-def call_with_fallback(query, label):
-    """Try models in order: gpt-5.4-pro -> o3 -> gpt-4.1"""
-    models = [PRIMARY_MODEL] + FALLBACK_MODELS
-
-    for model in models:
-        start = time.time()
-        print(f"  Calling {model} (timeout={TIMEOUT_SECONDS}s)...", flush=True)
-
-        result, error = call_model_with_timeout(model, query, TIMEOUT_SECONDS)
+        result = response.output_text
         elapsed = time.time() - start
+        print(f"  {MODEL} done in {elapsed:.0f}s. Length: {len(result)} chars", flush=True)
+        return result, MODEL
+    except Exception as e:
+        elapsed = time.time() - start
+        print(f"  {MODEL} failed after {elapsed:.0f}s: {e}", flush=True)
 
-        if result is not None:
-            print(f"  {model} done in {elapsed:.0f}s. Length: {len(result)} chars", flush=True)
-            return result, model
-        else:
-            print(f"  {model} failed after {elapsed:.0f}s: {error}", flush=True)
-            if model != models[-1]:
-                print(f"  Trying next fallback...", flush=True)
+        # Fallback to o3
+        print(f"  Falling back to o3...", flush=True)
+        try:
+            start2 = time.time()
+            response = client.responses.create(
+                model='o3',
+                tools=[{'type': 'web_search_preview'}],
+                input=query,
+            )
+            result = response.output_text
+            elapsed2 = time.time() - start2
+            print(f"  o3 done in {elapsed2:.0f}s. Length: {len(result)} chars", flush=True)
+            return result, 'o3'
+        except Exception as e2:
+            print(f"  o3 also failed: {e2}", flush=True)
 
-    return "[ERROR: All models failed]", "error"
+            # Last resort: gpt-4.1
+            print(f"  Last resort: gpt-4.1...", flush=True)
+            try:
+                start3 = time.time()
+                response = client.responses.create(
+                    model='gpt-4.1',
+                    tools=[{'type': 'web_search_preview'}],
+                    input=query,
+                )
+                result = response.output_text
+                elapsed3 = time.time() - start3
+                print(f"  gpt-4.1 done in {elapsed3:.0f}s. Length: {len(result)} chars", flush=True)
+                return result, 'gpt-4.1'
+            except Exception as e3:
+                return f"[ERROR: All models failed. {MODEL}: {e}, o3: {e2}, gpt-4.1: {e3}]", "error"
 
 
-# ── Query definitions ──
-
+# ── Query 1: Researcher scenario cost comparison ──
 QUERY_1 = """あなたはAI/ML研究者がGPUクラウドを選ぶ際のコスト比較を行うアナリストです。以下の「研究者が実際に使いそうな利用シナリオ」で、各プロバイダーの総コストを比較してください。
 
 必ずWeb検索して2026年3月時点の最新価格を使ってください。
@@ -140,7 +132,7 @@ QUERY_1 = """あなたはAI/ML研究者がGPUクラウドを選ぶ際のコス�
 
 価格が不明な場合は「要問合せ」「N/A」と明記。H100がない場合は最も近いGPU（A100等）で代替し注記。"""
 
-
+# ── Query 2: Non-price comparison for researchers ──
 QUERY_2 = """あなたはAI/ML研究者向けGPUクラウドアナリストです。以下16社のプロバイダーについて、研究者視点での金額以外のメリット・デメリットを詳細に比較してください。Web検索で各社の最新情報を確認してください。
 
 対象プロバイダー:
@@ -184,7 +176,7 @@ QUERY_2 = """あなたはAI/ML研究者向けGPUクラウドアナリストで�
 
 さらに各社について2-3行で「研究者にとっての最大のメリット」と「最大のデメリット」を文章で記述。"""
 
-
+# ── Query 3: Researcher persona cost simulation ──
 QUERY_3 = """あなたはAI/ML研究者向けGPUクラウドアナリストです。以下の4つの研究者ペルソナが1年間GPUクラウドを使った場合の年間コストを、主要プロバイダーで比較してください。
 Web検索して2026年3月時点の最新価格を使ってください。
 
@@ -215,7 +207,7 @@ AWS, Google Cloud, Azure, CoreWeave, Lambda Labs, RunPod, Modal, Vast.ai, さく
 
 | ペルソナ | AWS | GCP | Azure | CoreWeave | Lambda | RunPod | Modal | Vast.ai | さくら | SOROBAN | ABCI | 推薦 |"""
 
-
+# ── Query 4: Where AIXS can win ──
 QUERY_4 = """あなたはAI/ML研究者向けGPUクラウドアナリストです。以下の分析を行ってください。Web検索して各社の最新価格を確認してください。
 
 AIXSはGPUクラウドのマーケットプレイス/プラットフォームとして、研究者向けにGPUリソースを提供しようとしている新規参入プレイヤーです。
@@ -255,7 +247,6 @@ AIXSはGPUクラウドのマーケットプレイス/プラットフォームと
 
 全て定量データで論じてください。"""
 
-
 queries = [
     ("Query 1: 研究者シナリオ別コスト比較", QUERY_1),
     ("Query 2: 非価格メリット・デメリット比較", QUERY_2),
@@ -270,50 +261,38 @@ section_titles = [
     "## Part 4: AIXSが勝てるポイント分析",
 ]
 
+results = []
+models_used = []
 
-if __name__ == '__main__':
-    multiprocessing.set_start_method('spawn', force=True)
-
-    results = []
-    models_used = []
-
-    total_start = time.time()
-
-    for i, (label, query) in enumerate(queries):
-        print(f"\n{'='*60}", flush=True)
-        print(f"[{i+1}/4] Running {label}...", flush=True)
-        print(f"{'='*60}", flush=True)
-
-        result, model = call_with_fallback(query, label)
-        results.append(result)
-        models_used.append(model)
-
-    total_elapsed = time.time() - total_start
-    print(f"\nTotal time: {total_elapsed:.0f}s ({total_elapsed/60:.1f} min)", flush=True)
-
-    # ── Combine all results into final markdown ──
+for i, (label, query) in enumerate(queries):
     print(f"\n{'='*60}", flush=True)
-    print("Writing combined output...", flush=True)
+    print(f"Running {label}...", flush=True)
+    print(f"{'='*60}", flush=True)
 
-    with open(OUTPUT_PATH, 'w', encoding='utf-8') as f:
-        f.write("# GPT-5.4-pro 研究者視点GPU価格・体験比較\n\n")
-        f.write("Model: gpt-5.4-pro (Responses API + web_search_preview)\n")
-        f.write("調査日: 2026-03-28\n\n")
+    result, model = call_with_fallback(query, label)
+    results.append(result)
+    models_used.append(model)
 
-        # Note which models were actually used
-        model_notes = []
-        for i, (title, model) in enumerate(zip(section_titles, models_used)):
-            model_notes.append(f"- {title}: `{model}`")
-        f.write("### 使用モデル\n")
-        for note in model_notes:
-            f.write(f"{note}\n")
-        f.write("\n---\n\n")
+# ── Combine all results into final markdown ──
+print(f"\n{'='*60}", flush=True)
+print("Writing combined output...", flush=True)
 
-        for i, (result, title) in enumerate(zip(results, section_titles)):
-            f.write(f"{title}\n\n")
-            f.write(result)
-            f.write("\n\n---\n\n")
+with open(OUTPUT_PATH, 'w', encoding='utf-8') as f:
+    f.write("# GPT-5.4-pro 研究者視点GPU価格・体験比較\n\n")
+    f.write("Model: gpt-5.4-pro (Responses API + web_search_preview)\n")
+    f.write("調査日: 2026-03-28\n\n")
 
-    print(f"\nSaved to: {OUTPUT_PATH}", flush=True)
-    print(f"Models used: {models_used}", flush=True)
-    print("All done.", flush=True)
+    # Note which models were actually used
+    for i, (title, model) in enumerate(zip(section_titles, models_used)):
+        if model != MODEL:
+            f.write(f"- {title}: fallback model `{model}` used\n")
+    f.write("\n---\n\n")
+
+    for i, (result, title) in enumerate(zip(results, section_titles)):
+        f.write(f"{title}\n\n")
+        f.write(result)
+        f.write("\n\n---\n\n")
+
+print(f"Saved to: {OUTPUT_PATH}", flush=True)
+print(f"Models used: {models_used}", flush=True)
+print("All done.", flush=True)

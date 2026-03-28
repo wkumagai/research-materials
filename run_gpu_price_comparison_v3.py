@@ -1,83 +1,91 @@
 #!/usr/bin/env python3
 """
-Call GPT-5.4-pro via OpenAI Responses API for GPU cost comparison.
-Uses multiprocessing for hard 600s timeout per call.
-Falls back to o3 then gpt-4.1 if gpt-5.4-pro times out.
+Call GPT-5.4-pro via OpenAI Responses API to create a detailed
+researcher-realistic GPU cost comparison across all direct competitors.
+Runs 4 queries sequentially. 600s timeout per call via signal alarm.
+Falls back to o3 if gpt-5.4-pro times out.
 """
 
 import os
 import sys
 import time
-import multiprocessing
-from multiprocessing import Process, Queue
+import signal
+from openai import OpenAI
 
 API_KEY = os.environ.get("OPENAI_API_KEY", "")
 PRIMARY_MODEL = 'gpt-5.4-pro'
-FALLBACK_MODELS = ['o3', 'gpt-4.1']
+FALLBACK_MODEL = 'o3'
 OUTPUT_PATH = '/Users/kumacmini/research-materials/gpt54pro_price_comparison.md'
 TIMEOUT_SECONDS = 600
 
-
-def _worker(model, query, result_queue):
-    """Worker process that calls the API and puts result in queue."""
-    from openai import OpenAI
-    try:
-        client = OpenAI(api_key=API_KEY)
-        response = client.responses.create(
-            model=model,
-            tools=[{'type': 'web_search_preview'}],
-            input=query,
-        )
-        result_queue.put(('ok', response.output_text))
-    except Exception as e:
-        result_queue.put(('error', str(e)))
+client = OpenAI(api_key=API_KEY)
 
 
-def call_model_with_timeout(model, query, timeout=TIMEOUT_SECONDS):
-    """Call a model in a subprocess with hard timeout."""
-    q = Queue()
-    p = Process(target=_worker, args=(model, query, q))
-    p.start()
-    p.join(timeout=timeout)
+class TimeoutError(Exception):
+    pass
 
-    if p.is_alive():
-        p.terminate()
-        p.join(5)
-        if p.is_alive():
-            p.kill()
-            p.join(5)
-        return None, f"Timed out after {timeout}s"
+def timeout_handler(signum, frame):
+    raise TimeoutError(f"Request exceeded {TIMEOUT_SECONDS}s timeout")
 
-    if not q.empty():
-        status, data = q.get_nowait()
-        if status == 'ok':
-            return data, None
-        else:
-            return None, data
-    else:
-        return None, "No result from worker"
-
+def call_model(model, query):
+    """Call a model with web_search_preview. No internal timeout - caller handles it."""
+    response = client.responses.create(
+        model=model,
+        tools=[{'type': 'web_search_preview'}],
+        input=query,
+    )
+    return response.output_text
 
 def call_with_fallback(query, label):
-    """Try models in order: gpt-5.4-pro -> o3 -> gpt-4.1"""
-    models = [PRIMARY_MODEL] + FALLBACK_MODELS
+    """Try gpt-5.4-pro with 600s alarm timeout, fall back to o3."""
+    # Try primary model
+    start = time.time()
+    print(f"  Calling {PRIMARY_MODEL} (timeout={TIMEOUT_SECONDS}s)...", flush=True)
 
-    for model in models:
-        start = time.time()
-        print(f"  Calling {model} (timeout={TIMEOUT_SECONDS}s)...", flush=True)
+    old_handler = signal.signal(signal.SIGALRM, timeout_handler)
+    signal.alarm(TIMEOUT_SECONDS)
 
-        result, error = call_model_with_timeout(model, query, TIMEOUT_SECONDS)
+    try:
+        result = call_model(PRIMARY_MODEL, query)
+        signal.alarm(0)  # cancel alarm
         elapsed = time.time() - start
+        print(f"  {PRIMARY_MODEL} done in {elapsed:.0f}s. Length: {len(result)} chars", flush=True)
+        return result, PRIMARY_MODEL
+    except (TimeoutError, Exception) as e:
+        signal.alarm(0)
+        signal.signal(signal.SIGALRM, old_handler)
+        elapsed = time.time() - start
+        print(f"  {PRIMARY_MODEL} failed after {elapsed:.0f}s: {e}", flush=True)
 
-        if result is not None:
-            print(f"  {model} done in {elapsed:.0f}s. Length: {len(result)} chars", flush=True)
-            return result, model
-        else:
-            print(f"  {model} failed after {elapsed:.0f}s: {error}", flush=True)
-            if model != models[-1]:
-                print(f"  Trying next fallback...", flush=True)
+    # Try fallback model
+    start2 = time.time()
+    print(f"  Falling back to {FALLBACK_MODEL} (timeout={TIMEOUT_SECONDS}s)...", flush=True)
 
-    return "[ERROR: All models failed]", "error"
+    signal.signal(signal.SIGALRM, timeout_handler)
+    signal.alarm(TIMEOUT_SECONDS)
+
+    try:
+        result = call_model(FALLBACK_MODEL, query)
+        signal.alarm(0)
+        elapsed2 = time.time() - start2
+        print(f"  {FALLBACK_MODEL} done in {elapsed2:.0f}s. Length: {len(result)} chars", flush=True)
+        return result, FALLBACK_MODEL
+    except (TimeoutError, Exception) as e2:
+        signal.alarm(0)
+        signal.signal(signal.SIGALRM, old_handler if old_handler else signal.SIG_DFL)
+        elapsed2 = time.time() - start2
+        print(f"  {FALLBACK_MODEL} failed after {elapsed2:.0f}s: {e2}", flush=True)
+
+    # Last resort: gpt-4.1
+    start3 = time.time()
+    print(f"  Last resort: gpt-4.1...", flush=True)
+    try:
+        result = call_model('gpt-4.1', query)
+        elapsed3 = time.time() - start3
+        print(f"  gpt-4.1 done in {elapsed3:.0f}s. Length: {len(result)} chars", flush=True)
+        return result, 'gpt-4.1'
+    except Exception as e3:
+        return f"[ERROR: All models failed]", "error"
 
 
 # ── Query definitions ──
@@ -270,50 +278,45 @@ section_titles = [
     "## Part 4: AIXSが勝てるポイント分析",
 ]
 
+results = []
+models_used = []
 
-if __name__ == '__main__':
-    multiprocessing.set_start_method('spawn', force=True)
-
-    results = []
-    models_used = []
-
-    total_start = time.time()
-
-    for i, (label, query) in enumerate(queries):
-        print(f"\n{'='*60}", flush=True)
-        print(f"[{i+1}/4] Running {label}...", flush=True)
-        print(f"{'='*60}", flush=True)
-
-        result, model = call_with_fallback(query, label)
-        results.append(result)
-        models_used.append(model)
-
-    total_elapsed = time.time() - total_start
-    print(f"\nTotal time: {total_elapsed:.0f}s ({total_elapsed/60:.1f} min)", flush=True)
-
-    # ── Combine all results into final markdown ──
+for i, (label, query) in enumerate(queries):
     print(f"\n{'='*60}", flush=True)
-    print("Writing combined output...", flush=True)
+    print(f"[{i+1}/4] Running {label}...", flush=True)
+    print(f"{'='*60}", flush=True)
 
-    with open(OUTPUT_PATH, 'w', encoding='utf-8') as f:
-        f.write("# GPT-5.4-pro 研究者視点GPU価格・体験比較\n\n")
-        f.write("Model: gpt-5.4-pro (Responses API + web_search_preview)\n")
-        f.write("調査日: 2026-03-28\n\n")
+    result, model = call_with_fallback(query, label)
+    results.append(result)
+    models_used.append(model)
 
-        # Note which models were actually used
-        model_notes = []
-        for i, (title, model) in enumerate(zip(section_titles, models_used)):
-            model_notes.append(f"- {title}: `{model}`")
+# ── Combine all results into final markdown ──
+print(f"\n{'='*60}", flush=True)
+print("Writing combined output...", flush=True)
+
+with open(OUTPUT_PATH, 'w', encoding='utf-8') as f:
+    f.write("# GPT-5.4-pro 研究者視点GPU価格・体験比較\n\n")
+    f.write("Model: gpt-5.4-pro (Responses API + web_search_preview)\n")
+    f.write("調査日: 2026-03-28\n\n")
+
+    # Note which models were actually used
+    model_notes = []
+    for i, (title, model) in enumerate(zip(section_titles, models_used)):
+        if model != PRIMARY_MODEL:
+            model_notes.append(f"- {title}: fallback model `{model}` used")
+    if model_notes:
         f.write("### 使用モデル\n")
         for note in model_notes:
             f.write(f"{note}\n")
-        f.write("\n---\n\n")
+        f.write("\n")
 
-        for i, (result, title) in enumerate(zip(results, section_titles)):
-            f.write(f"{title}\n\n")
-            f.write(result)
-            f.write("\n\n---\n\n")
+    f.write("---\n\n")
 
-    print(f"\nSaved to: {OUTPUT_PATH}", flush=True)
-    print(f"Models used: {models_used}", flush=True)
-    print("All done.", flush=True)
+    for i, (result, title) in enumerate(zip(results, section_titles)):
+        f.write(f"{title}\n\n")
+        f.write(result)
+        f.write("\n\n---\n\n")
+
+print(f"\nSaved to: {OUTPUT_PATH}", flush=True)
+print(f"Models used: {models_used}", flush=True)
+print("All done.", flush=True)

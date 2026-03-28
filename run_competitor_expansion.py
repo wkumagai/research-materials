@@ -6,10 +6,11 @@ Uses the Interactions API with deep-research-pro-preview-12-2025.
 
 from google import genai
 from google.genai._interactions.types.tool_param import GoogleSearch
+import os
 import time
 import sys
 
-API_KEY = 'AIzaSyD997xkCbC3ZFYlG2U9imGT-wGVlhb4Rdw'
+API_KEY = os.environ.get("GOOGLE_API_KEY", "")
 MODEL = 'deep-research-pro-preview-12-2025'
 OUTPUT_PATH = '/Users/kumacmini/research-materials/deep_research_competitor_expansion.md'
 TIMEOUT_SECONDS = 15 * 60  # 15 minutes

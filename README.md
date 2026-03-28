@@ -12,9 +12,17 @@
 
 ### AIXSは事業として成り立つか？
 
-**結論: Conditional Go -- 条件付き実行（成功確率: 8-12%、修正戦略採用時）**
+**結論: Conditional Go -- 条件付き実行（成功確率: 2.3-12%、戦略と前提条件により変動）**
 
-5エージェント合議（Claude Advocate/Critic/Pragmatist + GPT-4o + Gemini Deep Research）による最終判定。フルビジョン直行は危険であり、段階的移行戦略を推奨。
+5エージェント合議（Claude Advocate/Critic/Pragmatist + GPT-4o + Gemini Deep Research）+ GPT-5.4-pro独立検証（6ファイル、448KB、26クエリ）による最終判定。フルビジョン直行は危険であり、段階的移行戦略を推奨。
+
+**成功確率の幅:**
+- **2.3-6%**: GPT-5.4-pro/o3の実データに基づく再計算（PMF到達率19%、ハイパースケーラー競合後生存率8.7%を使用）
+- **5-8%**: GPT-5.4-proリアリティチェック（一般SaaSなら妥当、GPUクラウドなら下限寄り）
+- **8-12%**: 5エージェント合議結果（修正戦略採用時）
+- **正直な評価: 2.3-12%の範囲内で、修正戦略の採用度合いと市場環境に依存**
+
+**GPT-5.4-pro #1推奨: 「1つのワークフローを支配してから拡張」** -- 汎用プラットフォームではなく、LoRAファインチューニング+評価など特定のワークフローに集中し、そこで圧倒的なUXを作ってから横展開する。
 
 **決定的な新事実:**
 - **CoreWeave + W&B買収（$1.7B）**: 「GPU + 実験管理」の統合は2025年に実現済み。AIXSのコアバリューの一部は既に存在する
@@ -77,6 +85,112 @@
 
 ---
 
+## GPT-5.4-pro検証結果サマリー
+
+### 調査概要
+- **モデル:** GPT-5.4-pro (Responses API + web_search_preview)、一部o3/gpt-4.1フォールバック
+- **調査日:** 2026-03-28~29
+- **ファイル数:** 6ファイル、合計約448KB
+- **クエリ数:** 合計26クエリ（7+5+4+2+4+4）
+- **合計API処理時間:** 約4時間（並列実行含む）
+
+### 主要な検証結果（5段階評価）
+
+| 検証項目 | 評価 | 要約 |
+|---|---|---|
+| 粗利66.7%の実現性 | ★★★☆☆ | **手数料売上ベースなら現実的**、GMV売上ベースなら非現実的。会計定義が決定的 |
+| 損益分岐MRR $73K | ★★★☆☆ | **超リーン運営なら可**。ただしARR/FTE $292Kは異常に効率的な前提で脆い |
+| 成功確率8-12% | ★★★☆☆ | **一般SaaSなら妥当**。GPUクラウドなら下限寄り（2.3-6%が実データベース） |
+| Phase 1コンサル+APIリセールの低リスク性 | ★★☆☆☆ | **資本リスクは低いが事業リスクは低くない**。人月商売化のリスク大 |
+| Papers with Code閉鎖の機会 | ★★★☆☆ | **部分的な機会**。空白は「統合UX」であって市場そのものではない |
+
+**総合評価: 2/5** -- 方向性は支持できるが、数字の精度と前提の甘さに要注意。
+
+### 価格プランの問題点（GPT-5.4-pro指摘）
+
+| プラン | 問題点 | 改善案 |
+|---|---|---|
+| Free $0（T4 20hr） | 無料枠が厚すぎる。月$7-12の原価負担 | T4 3-5hrに削減、またはベストエフォート化 |
+| Pro $99（H100 25hr） | H100市場相場$2.69-$4.50/hrで粗利ほぼゼロ~赤字 | H100 10-15hrに削減、またはGPUクレジット制に変更 |
+| Power $299（H100 100hr） | GPU原価引いた残り$30。サポート・開発費を賄えない | H100 70-80hrに削減 |
+| ARPU $100/月 | 研究者向け競合（HF Pro $9、W&B Pro $60）と比較して強気 | チーム比率が高い前提が必要 |
+
+### 最も信頼性の高い数字
+1. RunPod ARR $120M+（公式プレスリリース）
+2. CoreWeave 2025売上$5.131B（公式IR）
+3. H100オンデマンド価格$1.99-$6.88/hr（各社公式）
+4. SaaS freemium転換率約5%（OpenView、n=450+）
+5. H100 1台CAPEX $35.3K、年間コスト$15,453（Epoch AI+EIA+CBRE計算）
+
+### 最も不確実な数字
+1. RunPod粗利率（Sacra 60-70% vs GPT-5.4-pro 15-25%: 定義の違い）
+2. 成功確率（2.3-12%: 前提条件次第で5倍のばらつき）
+3. TAM（$41B-$134B: 定義範囲次第で3倍のばらつき）
+
+---
+
+## データの信頼性と矛盾点
+
+### RunPod粗利率: Sacra推定60-70% vs GPT-5.4-pro推定15-25%
+- **原因:** 会計定義の違い（agent/net revenue vs principal/gross revenue）
+- **Sacra 60-70%:** マーケットプレイス手数料売上ベースの粗利率（Community Cloudのテイクレート部分のみ）
+- **GPT-5.4-pro 15-25%:** GMV全額売上計上の全社粗利率（Secure Cloud含む。GPU原価が乗る）
+- **結論:** AIXSの事業計画では、売上=プラットフォーム手数料（net revenue）と明記すべき。その場合66.7%粗利は成立しうる
+
+### Vast.ai ARR: $2.2M vs $12M+
+- **原因:** 時期の違い
+- **$2.2M:** 2024年以前の推定値（Critic使用）
+- **$12M+:** 2026年3月5日の公式ブログ「revenue crossed seven figures per month for the first time」
+- **結論:** $12M+が最新の正確な数値。Vast.aiは売上13倍成長を達成
+
+### 成功確率の幅: 2.3-12%
+- **原因:** 前提条件の違い（各段階の条件付き確率の置き方）
+- **2.3%:** o3による実データ再計算（最も保守的）
+- **4-6%:** 修正戦略採用時のo3推定
+- **8-12%:** 5エージェント合議結果（やや楽観的）
+- **結論:** データドリブンでは4-6%が中央推定。8-12%は「うまくいった場合」の上限
+
+### 価格データの注意
+- **調査日:** 2026-03-28時点のスナップショット
+- GPU価格は3-6ヶ月で大幅に変動する（H100は18ヶ月で$8+→$2.50に70%下落済み）
+- B200/GB200の供給拡大でH100価格はさらに10-20%下落する見込み
+
+---
+
+## 最終推奨アクション（全分析統合）
+
+### Phase 0: 検証（0-3ヶ月）
+- **研究者50人インタビュー**（WTP検証）: 支払意向>¥20k/月が30%以上なら継続
+- Kill基準: WTPが確認できなければ即座にピボット
+
+### Phase 1: 1つのワークフロー特化（3-12ヶ月）
+- **LoRAファインチューニング+評価**など、1つの具体的ワークフローで圧倒的UXを構築
+- GPU+実験管理の統合MVP: RunPod/Lambda/さくらDOK統合
+- KPI: 有料20研究者、D30リテンション>40%、粗利>25%
+- **Kill基準: 6ヶ月で有料10人未満 → ピボット**
+
+### Phase 2: マーケットプレイス拡張（12-24ヶ月）
+- 国プロ案件向けGPU調達BPO機能追加
+- チーム機能、マルチクラウドオーケストレーション
+- KPI: MRR ¥8M、法人3社、Churn<3%
+- Kill基準: MRR ¥5M未満 → GPU-less SaaSにピボット
+
+### Phase 3: 異種資源統合（24ヶ月+）
+- HPC統合、量子シミュレータ接続
+- 物理世界統合（Wet Lab）は2028年以降
+- 日本→アジア（韓国、台湾、シンガポール）→欧州の段階展開
+
+### Kill Criteria統合版
+| チェックポイント | 基準 | 未達時のアクション |
+|---|---|---|
+| Phase 0（3ヶ月） | WTP>¥20k/月が30%以上 | ピボット |
+| Phase 1（6ヶ月） | 有料10人以上 | ピボット候補: GPUブローカー、R&Dコンサル |
+| Phase 1（12ヶ月） | MRR $10K+、D30 Ret>40%、粗利>25% | 撤退またはMLOpsコンサルへ転換 |
+| Phase 2（18ヶ月） | MRR ¥8M、法人3社 | GPU-less SaaSにピボット |
+| Phase 2（24ヶ月） | MRR $50K+、Series A見込み | ライフスタイルビジネスまたは買収先探索 |
+
+---
+
 ## 2. ファイル構成と読み方ガイド
 
 ### 全ファイル一覧
@@ -103,16 +217,29 @@
 | [qa_competitive_analysis.md](qa_competitive_analysis.md) | 競合分析のQAチェック結果（精度98.5%） | - | 参考 |
 | [qa_market_research.md](qa_market_research.md) | 市場調査のQAチェック結果（精度92%） | - | 参考 |
 | [gpt_review_results.json](gpt_review_results.json) | GPT-5.4-proレビューの生データ | - | 参考 |
+| **GPT-5.4-pro検証シリーズ（2026-03-28~29）** | | | |
+| [gpt54pro_comprehensive_analysis.md](gpt54pro_comprehensive_analysis.md) | Big Tech統合脅威分析（AWS/Google/Microsoft/NVIDIA）。7クエリ、143KB | ~2,800行 | 16番目 |
+| [gpt54pro_regional_gpu_usage.md](gpt54pro_regional_gpu_usage.md) | 地域別GPU利用実態（米国・日本・EU等）。5クエリ、149KB | ~2,900行 | 17番目 |
+| [gpt54pro_reality_check.md](gpt54pro_reality_check.md) | 事業成立性のリアリティチェック。5主張の検証+価格戦略批判 | ~750行 | **18番目（必読）** |
+| [gpt54pro_financial_critique.md](gpt54pro_financial_critique.md) | 財務モデル批判。RunPod/Modal/CoreWeave/Lambda/Vast.ai実データ、H100ユニットエコノミクス | ~600行 | **19番目（必読）** |
+| [gpt54pro_price_comparison.md](gpt54pro_price_comparison.md) | 16社x4シナリオのGPU価格比較、研究者ペルソナ別年間コスト | ~500行 | 20番目 |
+| [gpt54pro_verdict_review.md](gpt54pro_verdict_review.md) | 合議判定書の独立レビュー。成功確率2.3-6%に下方修正、Kill Criteria強化提案 | ~210行 | **21番目（必読）** |
+| [analysis_financial_model.md](analysis_financial_model.md) | 保守的財務モデリング（バイアス補正適用）。改定プラン体系、18ヶ月収益予測 | ~700行 | 22番目 |
+| [citation_verification.md](citation_verification.md) | 主要30クレームの出典URL検証。矛盾データ5件の原因分析 | ~200行 | 23番目 |
 
 ### 読む順序の推奨
 
 **意思決定のみ**: README.md（本ファイル）を通読すれば十分。
 
-**戦略策定**: README.md → debate_synthesis_final.md → AIXS_Competitive_Analysis_Market_Research.md → analysis_viability_moat.md
+**戦略策定**: README.md → debate_synthesis_final.md → gpt54pro_verdict_review.md → AIXS_Competitive_Analysis_Market_Research.md → analysis_viability_moat.md
 
-**実行計画**: 上記 + analysis_pricing_gtm.md → analysis_strategy_timing.md
+**実行計画**: 上記 + analysis_pricing_gtm.md → analysis_financial_model.md → analysis_strategy_timing.md
 
-**リスク評価**: debate_synthesis_final.md → critical_review_deep.md → critical_review_gpt.md → competitor_threat_gpt.md → deep_research_competitor_expansion.md
+**リスク評価**: debate_synthesis_final.md → gpt54pro_reality_check.md → gpt54pro_financial_critique.md → critical_review_deep.md → competitor_threat_gpt.md
+
+**GPT-5.4-pro検証**: gpt54pro_reality_check.md → gpt54pro_financial_critique.md → gpt54pro_price_comparison.md → gpt54pro_verdict_review.md → citation_verification.md
+
+**市場詳細**: gpt54pro_comprehensive_analysis.md → gpt54pro_regional_gpu_usage.md → deep_research_competitor_expansion.md
 
 **ディベート詳細**: debate_advocate.md → debate_critic.md → debate_pragmatist.md → analysis_competitive_scenarios.md
 

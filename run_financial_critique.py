@@ -8,12 +8,13 @@ Uses extended timeout (1800s) via httpx to handle long web search operations.
 import concurrent.futures
 import datetime
 import json
+import os
 import sys
 import traceback
 import httpx
 from openai import OpenAI
 
-API_KEY = "os.environ.get("OPENAI_API_KEY")"
+API_KEY = os.environ.get("OPENAI_API_KEY", "")
 
 # Create httpx client with 1800s (30 min) timeout to handle long web search operations
 http_client = httpx.Client(
