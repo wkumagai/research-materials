@@ -3,11 +3,14 @@
 Model: gpt-5.4-pro (Responses API + web_search_preview)
 調査日: 2026-03-28
 
+> **注記**: gpt-5.4-pro は web_search_preview ツール使用時に全4クエリで600秒タイムアウト。
+> 全パートは o3 (Responses API + web_search_preview) をフォールバックとして使用。
+
 ### 使用モデル
-- ## Part 1: 研究者シナリオ別コスト比較（16社×4シナリオ）: `o3`
-- ## Part 2: 非価格メリット・デメリット比較（16社×15軸）: `o3`
-- ## Part 3: 研究者ペルソナ別年間コストシミュレーション: `o3`
-- ## Part 4: AIXSが勝てるポイント分析: `o3`
+- Part 1 研究者シナリオ別コスト比較: `o3` (144s, 5,357 chars)
+- Part 2 非価格メリット・デメリット比較: `o3` (51s, 5,615 chars)
+- Part 3 研究者ペルソナ別年間コストシミュレーション: `o3` (91s, 2,856 chars)
+- Part 4 AIXSが勝てるポイント分析: `o3` (75s, 3,503 chars)
 
 ---
 
