@@ -1,10 +1,10 @@
 # AIXS Comprehensive Competitive Analysis & Market Research
 
-**Generated**: 2026-03-29 05:29:37
+**Generated**: 2026-03-29 05:51:47
 **Model**: gpt-5.4-pro (Responses API with web_search_preview)
 **Queries**: 7 sequential searches
-**Total tokens used**: 1,337,309
-**Total API time**: 6309.1s
+**Total tokens used**: 1,669,149
+**Total API time**: 7634.0s
 
 > This analysis upgrades the previous gpt-4o-search-preview runs with gpt-5.4-pro for higher quality reasoning and more comprehensive web search results.
 
@@ -811,6 +811,100 @@ Stanford AI Indexでは、**2024年の企業AI投資は$252.3B**、**世界のAI
 
 ---
 
+# Query 7: Rebuttal with Evidence (証拠に基づく反論)
+
+以下、**Query 6 の各批判に対する“数字ベースの反論”**です。  
+先に1点だけ整理すると、④でいう「ToC先行」は厳密には**“個人・小チーム起点の self-serve / PLG → 管理・統制・セキュリティ要件で ToB/Enterprise に拡張”**と読むのが正確です。Slack、Figma、Notion、Hugging Faceはいずれもそのパターンです。 ([sec.gov](https://www.sec.gov/Archives/edgar/data/1764925/000162828019004786/slacks-1.htm))
+
+## 1) 「GPU再販は粗利10–20%しか出ない」への反論
+この批判は、**“GPUを自社で仕入れて再販するモデル”**と、**“第三者GPU供給を束ねる marketplace / agency モデル”**を混同しています。後者では論点はハードの転売粗利ではなく、**take rate × 流通総額 × 稼働率**です。Vast.ai は公式FAQで、**成功ジョブ売上の75%をホスト、25%をVastが保持**すると明記しており、これはまさに20–30%レンジの marketplace take rate です。しかも Vast は公式リリースで、**350超の独立ホスト、17,000超GPU**を束ねる marketplace であり、**2019年以降の平均 YoY 成長 265%**、2024年は**約310%成長**と説明しています。つまり、比較対象は「低粗利のGPU卸売」ではなく、「高付加価値の二面市場プラットフォーム」です。 ([console.vast.ai](https://console.vast.ai/faq))
+
+投資家向けの返しとしては、**「粗利10–20%批判は owner-operator 前提。Marketplace は revenue recognition も unit economics も別物」**で十分です。少なくとも Vast のような現行プレイヤーは、すでに**25% take rate**で成立しており、GPU resale 批判の前提自体がずれています。 ([console.vast.ai](https://console.vast.ai/faq))
+
+## 2) 「後発劣位。大手クラウドが全部取る」への反論
+**未サーブ顧客セグメントは小さくありません。** UNESCO の Science Report では、世界の研究者プールは**2018年時点で 885.4万人（FTE）**、さらに UIS の 2025年アップデートでは、**世界の研究者密度は2015年の1,137人/100万人から2022年には1,420人/100万人へ上昇**しています。つまり、研究人材そのものが増えており、学術・研究用途の compute 需要母数は拡大しています。 ([unesco.org](https://www.unesco.org/reports/science/2021/en/statistics))
+
+米国だけでも、NSF/NCSES によれば**2023年度の大学 R&D 支出は 1,088億ドル**、調査対象は**914機関**です。にもかかわらず、Brown 大学などの研究者調査では、**85%が cloud compute 予算ゼロ**、**66%が所属先計算資源への満足度を5点中3以下**、**41%は multi-node 支援なし**、典型的な学術環境は**1–8 GPUを数日〜数週間使える程度**と報告されています。Nature も 2024年に「学術研究者は強力なチップへのアクセス不足に不満」と報じました。つまり、**“大手が全部取っている”のではなく、“学術・小規模ラボに十分届いていない”**のが実態です。 ([ncses.nsf.gov](https://ncses.nsf.gov/pubs/nsf25313/section/21485))
+
+さらに小規模事業者側も無視できません。NCSES によれば、**従業員10–249人の中小企業は2023年に米国 business R&D の9%を実施**しており、総額**7,220億ドル**に対して約**649.8億ドル相当**です。加えて**1–9人の microbusiness だけでも 2022年に 57億ドルの R&D を自社実施**しています。これは hyperscaler の最優先顧客ではないが、十分にお金を払う実需セグメントです。 ([ncses.nsf.gov](https://ncses.nsf.gov/pubs/nsf25353))
+
+政策面でも未充足需要は明白です。NSF の NAIRR pilot は「AI資源へのアクセス民主化」を目的に始まり、**2024年10月時点で150件超の resource award** を出しています。もし大手クラウドだけで十分なら、こうした公的アクセス基盤はここまで急いで作られていません。 ([nsf.gov](https://www.nsf.gov/science-matters/us-nairr-pilot-brings-cutting-edge-ai-resources-researchers))
+
+## 3) 「異種R&D統合の需要は本当にあるのか」への反論
+厳密に「Lab-as-a-Service」単独の公的 TAM はまだ薄いですが、**隣接市場はすでに十分に大きく、しかも成長しています。** Grand View Research によれば、**lab automation** は**2024年 82.7億ドル → 2033年 183.9億ドル（CAGR 9.3%）**、**laboratory informatics** は**2025年 40.7億ドル → 2033年 59.8億ドル（CAGR 4.9%）**、**cloud-based LIMS** は**2025年 9.07億ドル → 2033年 15.69億ドル（CAGR 7.1%）**です。要するに、**自動化・データ管理・クラウド制御の予算は既に立っている**ので、Lab-as-a-Service は「ゼロから市場を作る話」ではなく、これらを束ね直す話です。 ([grandviewresearch.com](https://www.grandviewresearch.com/industry-analysis/lab-automation-market))
+
+ワークフロー面の需要も強いです。Benchling の 2024 調査では、**大手バイオファーマの IT の43%が“20超の科学ソフト”を支えている**と回答し、**小規模企業で“R&D組織の60%以上の実験機器が自動データ取得されている”のは37%にとどまり**、**cloud-based scientific software / SaaS の採用は小規模23%、大企業17%**でした。2026年の Benchling 調査でも、AI導入は**“データが scattered / incomplete / hard to validate” な領域で失速**し、逆に**89%の科学者が copilot / reasoning tools を最初の入口として使う**とされています。つまり需要がないのではなく、**データとワークフローの断絶がボトルネック**です。そこを埋めるのが Lab-as-a-Service です。 ([benchling.com](https://www.benchling.com/blog/2024-state-of-tech-report))
+
+研究者全般の業務負荷も追い風です。Elsevier の 2025年グローバル調査では、**研究に十分な時間があると答えたのは45% בלבד**、一方で**58%が既に AI ツールを使用**しています。研究者が求めているのは、単発の AI ではなく、**探索→実験→記録→解析→共有**を短縮する統合ワークフローです。 ([elsevier.com](https://www.elsevier.com/about/press-releases/elseviers-global-survey-of-3-000-researchers-reveals-less-than-half-have))
+
+加えて、需要の制度面シグナルも強いです。米議会の **Cloud LAB Act of 2025** は、NSF に cloud laboratory network の構築を求め、**少なくとも2つの phase II cloud labs、さらに少なくとも3つの phase III cloud labs** を整備する設計です。Strateos も、**on-site cloud labs への顧客需要増加**を理由に戦略転換し、**top 20 バイオファーマ2社向けの multi-million-dollar 設計案件**完了を公表しました。市場がなければ、政策も大手顧客もここまで動きません。 ([congress.gov](https://www.congress.gov/bill/119th-congress/senate-bill/2676/text))
+
+## 4) 「ToC先行は危険。最初からToBに行くべき」への反論
+この批判は半分正しくて、半分ズレています。正確には**“ToC”ではなく、“個人起点・小チーム起点の PLG”**です。そして、workflow/DevTools ではこの型が非常に強い。Slack の S-1 では、**free version で初期利用と organic adoption を促し、enterprise decision-makers は社内の自然増殖を見て採用を決めることが多い**と明記されています。さらに Slack は、**free-to-paid conversion を customer experience team の中核KPI**としていました。これはまさに bottom-up → top-down の教科書例です。 ([sec.gov](https://www.sec.gov/Archives/edgar/data/1764925/000162828019004786/slacks-1.htm))
+
+Figma も同じで、Adobe 向け S-4 では、**Figma の revenue growth のかなりの部分は “word-of-mouth” による組織内の organic growth**から来ると説明され、**free offering から paid customer への conversion**が明示的な論点になっています。さらに Figma の 2025年公式発表では、**Q4 2024 の MAU の約3分の2が伝統的デザイン職以外**、**約30%は developers**、**85%のMAUが米国外**でした。つまり、最初は個人/小チームが使い始め、やがて開発・PM・マーケ・経営層まで巻き込むことで Enterprise 化しているわけです。 ([adobe.com](https://www.adobe.com/content/dam/cc/en/investor-relations/pdfs/ADBE-S-4_Consent-Solicitation-Statement-of-Figma-Inc-And-Prospectus-of-Adobe-Inc.pdf))
+
+Notion も典型例です。Notion の公式 product ページは**“Over 100M users worldwide”**、**“62% of Fortune 100”** を掲げつつ、入口は**“Try for free”**です。Pricing でも、**Free plan → per-member paid seat → Enterprise analytics / security** という設計が明確です。つまり free/self-serve を入口にしつつ、組織導入時に管理・統制・分析で monetization を深めています。 ([notion.com](https://www.notion.com/product))
+
+Hugging Face はさらに分かりやすいです。2025年12月時点で、**13 million AI builders**、**300,000 organizations** が Hub に存在し、同社は Fortune 500 企業ですら**free organizations**を使っている実態を指摘しています。一方で Enterprise plan では **SSO、RBAC、audit logs、SCIM** などを提供しています。つまり、**コミュニティ/個人利用が先に広がり、ガバナンス需要が後から Enterprise 売上になる**。これを「ToC先行は危険」と切って捨てるのは、AI/DevTools の実例と逆です。 ([huggingface.co](https://huggingface.co/blog/jeffboudier/shadow-ai))
+
+## 5) 「日本スタートアップはグローバルで勝てない」への反論
+これは**“勝率が高い”とは言えないが、“勝率ゼロ”は明確に誤り**です。日本発/日本起点でも、少なくとも B2D・コラボレーション・OSS インフラでは成立例があります。最も分かりやすいのは Nulab で、**2004年に福岡で創業**、現在 **4M+ users、180+ countries、5 offices**。Backlog は **2019年に 10,000 paid customers**、2020年時点で**1.7 million active users**を超え、現在も **“Trusted by over 4 million users worldwide”** を公式に掲げています。これは日本本社のままグローバル化した collaboration / developer-adjacent SaaS の成立例です。 ([nulab.com](https://nulab.com/about/))
+
+Treasure Data も重要です。公式 company page では、**550+ employees、80+ Forbes Global 2000 customers、75+ countries supported、2B+ profiles managed**、拠点も**Mountain View / New York / Tokyo / London / Nice / Vancouver** と明記されています。しかも 2012年の公式 launch 時点で、**paying customers を持ち、100 billion rows 超のデータを管理**していました。さらに共同創業者 Kaz Ohta は、同社公式リリースによれば**日本の Hadoop User Group 創設者**です。Treasure Data は厳密には CDP ですが、**日本人創業・OSS/data infrastructure 起点で世界企業に売る**という意味で、十分に「日本起点のグローバル開発者インフラ成功例」です。 ([treasuredata.com](https://www.treasuredata.com/company))
+
+OSS では Fluentd がさらに強い反例です。Fluentd 公式サイトは**5,000+ data-driven companies rely on Fluentd**、**largest user 50,000+ servers** と記載し、CNCF の project page では**41,330 contributors、9,222 contributing organizations** を示しています。Treasure Data の紹介ページでも、**日本人創業者チームが Fluentd / Fluent Bit などを生み出した**とされています。つまり「日本発グローバルDevToolsは無理」ではなく、**英語・OSS・海外顧客を最初から取りに行く設計ができれば十分成立する**、が正しい言い方です。 ([fluentd.org](https://www.fluentd.org/))
+
+## 6) 「AIバブルが崩れたら終わる」への反論
+**むしろ今のデータは、効率改善が需要減ではなく需要増につながる“ジェヴォンズ型”を示しています。** TSMC は 2025 Q1 コールで、**AI accelerators revenue は 2025年に倍増**、さらに **2024–2029年の5年間で mid-to-high-50s% CAGR** まで見通しを引き上げました。しかも同社は、**reasoning models や DeepSeek のような効率化は barriers を下げ、AIモデルの wider usage / greater adoption を生み、結果として leading-edge silicon をより必要にする**と明言しています。これはジェヴォンズのパラドックスを、供給側の最重要プレイヤーがそのまま語っているに等しいです。 ([investor.tsmc.com](https://investor.tsmc.com/english/encrypt/files/encrypt_file/reports/2025-04/7630274eecc1197a4e3ea6a415f44a47204fe10a/TSMC%201Q25%20Transcript.pdf))
+
+実需側でも同じです。Alphabet は 2025 Q3 コールで、**月間 token 処理量が 1.3 quadrillion、1年で20倍超**になったと開示しました。Q2 2025 の公式決算では、Cloud の需要増を受けて **2025年 capex を約850億ドルに引き上げ**、Q4 2025 コールでは **2025年実績 capex が 910億ドル**、2026年も同程度の投資を想定しつつ、なお**供給制約状態が続く**と説明しています。効率化しているのに、総需要は爆発的に増えているわけです。 ([abc.xyz](https://abc.xyz/investor/events/event-details/2025/2025-Q3-Earnings-Call-2025-4OI4Bac_Q9/default.aspx))
+
+Microsoft と Meta も同方向です。Microsoft は公式ブログで、**FY2025 に AI-enabled datacenters へ約800億ドル投資**すると表明しました。Meta は 2025年に **722.2億ドルの capex** を使い、2026年ガイダンスを **1,150億〜1,350億ドル**に引き上げています。これは「バブル崩壊で capex が止まる」どころか、**2026年にさらに増やす**という意思表示です。 ([blogs.microsoft.com](https://blogs.microsoft.com/on-the-issues/2025/01/03/the-golden-opportunity-for-american-ai/))
+
+そして GPU 需要の最前線では、NVIDIA の 2026会計年度データセンター売上は**1,937億ドル、前年比68%増**、Q4 だけでも **623億ドル、前年比75%増**でした。NVIDIA CEO は同時に、**lower cost per token** と **enterprise adoption of agents is skyrocketing** を並べて語っています。つまり、**単価が下がるほど利用用途が増え、総需要はさらに伸びる**という構造です。これは「AIバブル」よりも、**AI compute が電力・ネットワークに近い基盤需要へ移行している**と読む方が実態に近いです。 ([nvidianews.nvidia.com](https://nvidianews.nvidia.com/news/nvidia-announces-financial-results-for-fourth-quarter-and-fiscal-2026))
+
+---
+
+## そのまま投資家向けに使える短い結論
+- **①粗利批判**：GPU再販ではなく marketplace take rate モデル。Vast の公式 fee は **25%**。比較前提が違う。 ([console.vast.ai](https://console.vast.ai/faq))
+- **②後発劣位**：未サーブ市場は実在。**世界研究者 885万人超、米大学R&D 1,088億ドル、学術の85%が cloud budget なし**。 ([unesco.org](https://www.unesco.org/reports/science/2021/en/statistics))
+- **③統合需要**：lab automation / informatics / cloud LIMS は **5–9%台 CAGR**、しかもワークフロー断絶は Benchling/Elsevier が確認。 ([grandviewresearch.com](https://www.grandviewresearch.com/industry-analysis/lab-automation-market))
+- **④ToC先行**：厳密には self-serve/PLG。Slack/Figma/Notion/HF は全部 **個人起点→Enterprise課金**。 ([sec.gov](https://www.sec.gov/Archives/edgar/data/1764925/000162828019004786/slacks-1.htm))
+- **⑤日本発勝率**：ゼロではない。**Nulab、Treasure Data、Fluentd** が反例。 ([nulab.com](https://nulab.com/about/))
+- **⑥バブル崩壊**：効率化は需要減でなく需要増。**TSMC AI売上CAGR mid-high 50s%、Google tokens 20x、Meta 2026 capex 115–135B、NVIDIA DC売上 +68%**。 ([investor.tsmc.com](https://investor.tsmc.com/english/encrypt/files/encrypt_file/reports/2026-01/51d09df96cd89ac19d65af39032b038dc2896a24/TSMC%204Q25%20Transcript.pdf))
+
+必要なら次に、これを  
+**「投資家FAQ形式（Q→A）」** か **「3分ピッチ用の反論スライド6枚」** にそのまま再構成します。
+
+### URL Citations (Query 7)
+
+- [https://www.sec.gov/Archives/edgar/data/1764925/000162828019004786/slacks-1.htm](https://www.sec.gov/Archives/edgar/data/1764925/000162828019004786/slacks-1.htm)
+- [https://console.vast.ai/faq](https://console.vast.ai/faq)
+- [https://www.unesco.org/reports/science/2021/en/statistics](https://www.unesco.org/reports/science/2021/en/statistics)
+- [https://ncses.nsf.gov/pubs/nsf25313/section/21485](https://ncses.nsf.gov/pubs/nsf25313/section/21485)
+- [https://ncses.nsf.gov/pubs/nsf25353](https://ncses.nsf.gov/pubs/nsf25353)
+- [U.S. NAIRR pilot brings cutting-edge AI resources to researchers and educators across the nation | NSF - U.S. National Science Foundation](https://www.nsf.gov/science-matters/us-nairr-pilot-brings-cutting-edge-ai-resources-researchers)
+- [https://www.grandviewresearch.com/industry-analysis/lab-automation-market](https://www.grandviewresearch.com/industry-analysis/lab-automation-market)
+- [https://www.benchling.com/blog/2024-state-of-tech-report](https://www.benchling.com/blog/2024-state-of-tech-report)
+- [https://www.elsevier.com/about/press-releases/elseviers-global-survey-of-3-000-researchers-reveals-less-than-half-have](https://www.elsevier.com/about/press-releases/elseviers-global-survey-of-3-000-researchers-reveals-less-than-half-have)
+- [https://www.congress.gov/bill/119th-congress/senate-bill/2676/text](https://www.congress.gov/bill/119th-congress/senate-bill/2676/text)
+- [https://www.adobe.com/content/dam/cc/en/investor-relations/pdfs/ADBE-S-4_Consent-Solicitation-Statement-of-Figma-Inc-And-Prospectus-of-Adobe-Inc.pdf](https://www.adobe.com/content/dam/cc/en/investor-relations/pdfs/ADBE-S-4_Consent-Solicitation-Statement-of-Figma-Inc-And-Prospectus-of-Adobe-Inc.pdf)
+- [https://www.notion.com/product](https://www.notion.com/product)
+- [https://huggingface.co/blog/jeffboudier/shadow-ai](https://huggingface.co/blog/jeffboudier/shadow-ai)
+- [https://nulab.com/about/](https://nulab.com/about/)
+- [https://www.treasuredata.com/company](https://www.treasuredata.com/company)
+- [https://www.fluentd.org/](https://www.fluentd.org/)
+- [https://investor.tsmc.com/english/encrypt/files/encrypt_file/reports/2025-04/7630274eecc1197a4e3ea6a415f44a47204fe10a/TSMC%201Q25%20Transcript.pdf](https://investor.tsmc.com/english/encrypt/files/encrypt_file/reports/2025-04/7630274eecc1197a4e3ea6a415f44a47204fe10a/TSMC%201Q25%20Transcript.pdf)
+- [https://abc.xyz/investor/events/event-details/2025/2025-Q3-Earnings-Call-2025-4OI4Bac_Q9/default.aspx](https://abc.xyz/investor/events/event-details/2025/2025-Q3-Earnings-Call-2025-4OI4Bac_Q9/default.aspx)
+- [https://blogs.microsoft.com/on-the-issues/2025/01/03/the-golden-opportunity-for-american-ai/](https://blogs.microsoft.com/on-the-issues/2025/01/03/the-golden-opportunity-for-american-ai/)
+- [https://nvidianews.nvidia.com/news/nvidia-announces-financial-results-for-fourth-quarter-and-fiscal-2026](https://nvidianews.nvidia.com/news/nvidia-announces-financial-results-for-fourth-quarter-and-fiscal-2026)
+- [https://investor.tsmc.com/english/encrypt/files/encrypt_file/reports/2026-01/51d09df96cd89ac19d65af39032b038dc2896a24/TSMC%204Q25%20Transcript.pdf](https://investor.tsmc.com/english/encrypt/files/encrypt_file/reports/2026-01/51d09df96cd89ac19d65af39032b038dc2896a24/TSMC%204Q25%20Transcript.pdf)
+
+*Query time: 1324.9s | Tokens: 331,840*
+
+---
+
 # Appendix: All URL Citations (Deduplicated)
 
 1. [A single data and AI development environment - Amazon SageMaker Unified Studio - AWS](https://aws.amazon.com/sagemaker/unified-studio/)
@@ -926,3 +1020,23 @@ Stanford AI Indexでは、**2024年の企業AI投資は$252.3B**、**世界のAI
 103. [https://www.jetro.go.jp/ext_images/en/invest/investment_environment/ijre/2025/ijreENreport2025.pdf](https://www.jetro.go.jp/ext_images/en/invest/investment_environment/ijre/2025/ijreENreport2025.pdf)
 104. [https://hai.stanford.edu/assets/files/hai_ai-index-report-2025_chapter4_final.pdf](https://hai.stanford.edu/assets/files/hai_ai-index-report-2025_chapter4_final.pdf)
 105. [Executive summary – Energy and AI – Analysis - IEA](https://www.iea.org/reports/energy-and-ai/executive-summary?utm_source=openai)
+106. [https://www.sec.gov/Archives/edgar/data/1764925/000162828019004786/slacks-1.htm](https://www.sec.gov/Archives/edgar/data/1764925/000162828019004786/slacks-1.htm)
+107. [https://www.unesco.org/reports/science/2021/en/statistics](https://www.unesco.org/reports/science/2021/en/statistics)
+108. [https://ncses.nsf.gov/pubs/nsf25313/section/21485](https://ncses.nsf.gov/pubs/nsf25313/section/21485)
+109. [https://ncses.nsf.gov/pubs/nsf25353](https://ncses.nsf.gov/pubs/nsf25353)
+110. [U.S. NAIRR pilot brings cutting-edge AI resources to researchers and educators across the nation | NSF - U.S. National Science Foundation](https://www.nsf.gov/science-matters/us-nairr-pilot-brings-cutting-edge-ai-resources-researchers)
+111. [https://www.grandviewresearch.com/industry-analysis/lab-automation-market](https://www.grandviewresearch.com/industry-analysis/lab-automation-market)
+112. [https://www.benchling.com/blog/2024-state-of-tech-report](https://www.benchling.com/blog/2024-state-of-tech-report)
+113. [https://www.elsevier.com/about/press-releases/elseviers-global-survey-of-3-000-researchers-reveals-less-than-half-have](https://www.elsevier.com/about/press-releases/elseviers-global-survey-of-3-000-researchers-reveals-less-than-half-have)
+114. [https://www.congress.gov/bill/119th-congress/senate-bill/2676/text](https://www.congress.gov/bill/119th-congress/senate-bill/2676/text)
+115. [https://www.adobe.com/content/dam/cc/en/investor-relations/pdfs/ADBE-S-4_Consent-Solicitation-Statement-of-Figma-Inc-And-Prospectus-of-Adobe-Inc.pdf](https://www.adobe.com/content/dam/cc/en/investor-relations/pdfs/ADBE-S-4_Consent-Solicitation-Statement-of-Figma-Inc-And-Prospectus-of-Adobe-Inc.pdf)
+116. [https://www.notion.com/product](https://www.notion.com/product)
+117. [https://huggingface.co/blog/jeffboudier/shadow-ai](https://huggingface.co/blog/jeffboudier/shadow-ai)
+118. [https://nulab.com/about/](https://nulab.com/about/)
+119. [https://www.treasuredata.com/company](https://www.treasuredata.com/company)
+120. [https://www.fluentd.org/](https://www.fluentd.org/)
+121. [https://investor.tsmc.com/english/encrypt/files/encrypt_file/reports/2025-04/7630274eecc1197a4e3ea6a415f44a47204fe10a/TSMC%201Q25%20Transcript.pdf](https://investor.tsmc.com/english/encrypt/files/encrypt_file/reports/2025-04/7630274eecc1197a4e3ea6a415f44a47204fe10a/TSMC%201Q25%20Transcript.pdf)
+122. [https://abc.xyz/investor/events/event-details/2025/2025-Q3-Earnings-Call-2025-4OI4Bac_Q9/default.aspx](https://abc.xyz/investor/events/event-details/2025/2025-Q3-Earnings-Call-2025-4OI4Bac_Q9/default.aspx)
+123. [https://blogs.microsoft.com/on-the-issues/2025/01/03/the-golden-opportunity-for-american-ai/](https://blogs.microsoft.com/on-the-issues/2025/01/03/the-golden-opportunity-for-american-ai/)
+124. [https://nvidianews.nvidia.com/news/nvidia-announces-financial-results-for-fourth-quarter-and-fiscal-2026](https://nvidianews.nvidia.com/news/nvidia-announces-financial-results-for-fourth-quarter-and-fiscal-2026)
+125. [https://investor.tsmc.com/english/encrypt/files/encrypt_file/reports/2026-01/51d09df96cd89ac19d65af39032b038dc2896a24/TSMC%204Q25%20Transcript.pdf](https://investor.tsmc.com/english/encrypt/files/encrypt_file/reports/2026-01/51d09df96cd89ac19d65af39032b038dc2896a24/TSMC%204Q25%20Transcript.pdf)
