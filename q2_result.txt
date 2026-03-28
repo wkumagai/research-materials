@@ -1,0 +1,102 @@
+前提：**2026-03-28時点**で確認できた公開価格・公開ベンチマークで評価します。結論だけ先に言うと、**Starterはまだ成立余地あり、FreeとProはかなり攻めすぎ**です。競合は総じて、**低い席課金＋GPU/トレーニング/ストレージの従量課金**に寄せています。Hugging FaceはPRO $9 / Team $20でGPUは時間課金、W&BはPro $60からで追加 tracked hours・storage を従量課金、CometはPro $19/userで追加 training hours を従量課金です。 ([huggingface.co](https://huggingface.co/pricing))
+
+## 1) Free tier: $0/月（T4 20hr）
+
+**判定: かなり難しい**
+
+- 公開相場だと、Google CloudのT4は**$0.35/h**、Hugging FaceのT4は**$0.40/h〜$0.60/h**です。したがって**T4 20時間の直コストは約$7〜$12/月**です。しかもこれはほぼGPU/最小構成ベースで、実運用ではサポート・ストレージ・帯域・不正利用対策が上乗せされます。 ([cloud.google.com](https://cloud.google.com/compute/gpus-pricing))
+- Google Colab無料版は、Google自身が**GPUアクセスは“heavily restricted”**、使用制限は**非公開かつ動的**、無料ノートブックは**最長12時間**と明記しています。つまりAIXSの「**固定でT4 20h無料**」は、Colab無料版よりかなり太いオファーです。 ([research.google.com](https://research.google.com/colaboratory/intl/en-GB/faq.html))
+- freemium転換が業界並みの**4〜6%**だとしても、無料ユーザー1人に持てる平均補助額はそんなに大きくありません。たとえばPro課金客の粗利余地をかなり楽観しても、無料ユーザー1人あたりに継続的に投じられる補助は**$1前後〜$2未満**に留まりやすく、**$7〜$12の固定無料枠**は重すぎます。 ([chartmogul.com](https://chartmogul.com/reports/saas-conversion-report/))
+
+**改善提案**
+- Freeは**T4 3〜5h/月**まで下げる。
+- 20hを維持したいなら、**ベストエフォート/プリエンプト/低優先度キュー**化して「保証しない」設計にする。
+- あるいは**学術認証つき無料枠**に寄せる。競合でも、Colab Pro for Education、W&Bのacademic research無料、Cometのacademic向け無料Proのように、**“誰でも無料”ではなく“認証された研究者に無料”**で原価を抑える動きが見られます。 ([research.google.com](https://research.google.com/colaboratory/intl/en-GB/faq.html))
+
+---
+
+## 2) Pro $99/月（H100 25hr含む）
+
+**判定: かなり難しい**
+
+- 公開相場のH100はかなり幅があります。Jarvis Labsは**$2.69/h**、Hugging Face Inference EndpointのAWS H100は**$4.50/h**、Paperspaceは**$5.95/h（on-demand promo）**、長期コミットなら**$2.24/h**です。したがって**25hの原価は約$67.25〜$112.50**、かなり良い長期契約でも**約$56**です。 ([jarvislabs.ai](https://jarvislabs.ai/pricing))
+- $99プランに25hを含めると、残る粗利は**$31.75（Jarvis相場）**、**$43（Paperspaceの3年コミット級）**、HFのAWS H100相場だと**赤字**です。ここからさらに決済手数料、CPU/RAM、ストレージ、サポート、アイドル率、在庫リスクを払う必要があるので、**“ユーザーが含有時間をちゃんと使う”前提では薄すぎる**です。 
+- 競合がこれを避けるためにやっているのは、**低めの月額＋高価GPUは別課金**です。HFはPROが**$9/月**でもH100は別時間課金、W&BはPro **$60/月**に加えて追加tracked hours **$1/hour**、CometはPro **$19/user/月**に加えて追加training hours **$1/hour**です。AIXSのProは、ここに逆らって**高価GPUを厚く月額に内包**しているので、ユニットエコノミクスが厳しくなります。 ([huggingface.co](https://huggingface.co/pricing))
+
+**改善提案**
+- Proは「H100 25h含む」ではなく、**$80〜$100分のGPUクレジット**にする。
+- もしくは**H100 10〜15h含む + 超過従量課金**に下げる。
+- **H100をPower tierに寄せる**のが自然です。ProはA100/L40S中心、PowerでH100優先権・予約枠・専用サポートを付ける方が競合パターンに近いです。
+- 参考までに、**Starter $29でA100 5h**の方はまだ現実味があります。A100はJarvis **$1.29〜$1.49/h**、HF **$2.50/h**なので、5h原価は**$6.45〜$12.50**で、$29から**$16.5〜$22.55**残せます。 ([jarvislabs.ai](https://jarvislabs.ai/pricing))
+
+---
+
+## 3) ARPU $100/月の想定
+
+**判定: 定義次第。  
+- “全ユーザーARPU”なら 非現実的  
+- “有料顧客あたりARPA”なら やや難しい**
+
+- まず、freemiumで**全ユーザー平均**が$100になるのは無理です。ChartMogulの2026調査では、freemiumのfree-to-paidは代表値が**約5.5%**です。仮に**有料顧客あたり$100**取れても、全ユーザーARPUは**約$5〜$5.5**にしかなりません。 ([chartmogul.com](https://chartmogul.com/reports/saas-conversion-report/))
+- 一方で、**有料顧客あたり**の$100は、一般SaaSのレンジとしてはゼロから外れていません。ChartMogulの2026 conversion survey の典型回答者は**ARPC $50〜$249/月**です。 ([chartmogul.com](https://chartmogul.com/reports/saas-conversion-report/))
+- ただし**研究者向けの直近競合価格**と比べると、AIXSの$100は高めです。Hugging Faceは**Pro $9 / Team $20/user / Enterprise starting at $50/user**、Overleafは**Standard $21/月 / Professional $42/月**、W&Bは**Pro starts at $60/月**、Cometは**Pro $19/user/月**です。したがって、AIXSが$100を成立させるには、**“研究SaaS”というより“GPU同梱の高付加価値コンピュートSaaS”**として売る必要があります。 ([huggingface.co](https://huggingface.co/pricing))
+- Team **$79/人/月**も、コラボSaaSとしてはかなり強気です。HF Team **$20/user**、Comet Pro **$19/user**、Overleaf Group Professional は**$359/user/年（約$29.9/月相当）**なので、**$79/user**は「明確な共有GPU枠・管理機能・優先実行」がないと厳しいです。 ([huggingface.co](https://huggingface.co/pricing))
+
+**改善提案**
+- KPIを**ARPU（全体）**と**ARPA/ARPPU（有料顧客）**で分ける。
+- 価格設計は**席課金**と**GPUクレジット**を分離する。
+- Teamは**$39〜$59/user + shared credit pool**の方が売りやすいです。
+
+---
+
+## 4) フリーミアム転換率 4〜6%
+
+**判定: 現実的**
+
+- OpenViewのPLG benchmarkでは、**freemium signups の free-to-paid は約5%**、calculator上の**signup-to-paid中央値は4%**です。 ([openviewpartners.com](https://openviewpartners.com/2022-product-benchmarks/))
+- さらにChartMogul/ProductLedの2026調査では、**通常のfreemium self-serveで3〜5%が“GOOD”**、**8〜12%が“GREAT”**、また“all freemium”の実例では**5.5% free-to-paid**でした。なので**4〜6%**は、**ちょうど市場中央値〜やや良い水準**です。 ([chartmogul.com](https://chartmogul.com/reports/saas-conversion-report/))
+- ただし、**無料枠が重すぎるGPU商材**は「払わないユーザー」を大量に集めやすいので、転換率が見た目より悪化しがちです。ChartMogulの同レポートでは、AI系はconversionがやや高く出る一方で、後述のとおり**retainしにくい**です。 ([chartmogul.com](https://chartmogul.com/reports/saas-conversion-report/))
+
+**改善提案**
+- H100はfreeから直接触らせず、**reverse trial**か**支払い情報登録後の短時間評価**にする。
+- Freeでは「論文再現・小規模fine-tune」まで、Paidで「長時間・H100・共有ワークスペース」を解放。
+- 転換率だけでなく、**activation率**と**30日残存**を一緒に見る。OpenViewではactivationの正常レンジを**20〜40%**としています。 ([openviewpartners.com](https://openviewpartners.com/blog/your-guide-to-product-led-growth-benchmarks/))
+
+---
+
+## 5) LTV推定は現実的か
+
+**判定: やや難しい**
+
+- ChartMogulのcustomer churn benchmarkでは、**ARPA $25〜$100/月の中央値が月次4.2% churn**、**$100〜$250/月で3.1% churn**です。$100を基準に単純計算すると、**粗LTVは約$2,381〜$3,226**、粗利率を仮に60%と置くと**約$1,429〜$1,935**です。 ([chartmogul.com](https://chartmogul.com/blog/actionable-saas-metrics-customer-churn-rate/))
+- ただし、AI-native/self-serveは通常SaaSよりretainが悪いです。ChartMogulの2025 AI retention分析では、**$50〜$249/月のAI-nativeは年次GRR 45%、NRR 61%**、**>$250/月でGRR 70%、NRR 85%**でした。45% GRRは月次換算で**約6.4%の粗収益churn相当**で、標準SaaSの3〜4%前提よりかなり厳しいです。 ([chartmogul.com](https://chartmogul.com/reports/saas-retention-the-ai-churn-wave/))
+- つまり、AIXSのLTVを**“普通のB2B SaaS”の churn 前提で置くと過大評価**になりやすいです。特に**$99未満〜$249帯のAI/self-serve**は、conversionは悪くなくても、継続率で削られやすいです。 ([chartmogul.com](https://chartmogul.com/reports/saas-retention-the-ai-churn-wave/))
+
+**改善提案**
+- LTVは1本で置かず、**Self-serve個人 / Team / Power**で分ける。
+- 必ず**gross-margin-adjusted LTV**を使う。
+- 初期仮説は、  
+  - 個人: **3〜6%月次churn**  
+  - Team: **2〜4%月次churn**  
+ くらいで感度分析するのが安全です。 ([chartmogul.com](https://chartmogul.com/blog/actionable-saas-metrics-customer-churn-rate/))
+
+---
+
+## 最終提案: 価格改変のおすすめ
+
+**いちばん現実的な再設計**はこれです。
+
+- **Free**: T4 **3〜5h/月**、ベストエフォート、低優先度、保存容量小  
+- **Starter $29**: A100 **3〜5h** か **$15〜$20相当のGPUクレジット**  
+- **Pro $99**: **固定H100 25hはやめる**。代わりに **$80〜$100クレジット** + 優先キュー + 共有機能  
+- **Team $49〜$59/user**: 管理・共有・監査 + **組織共有クレジットプール**  
+- **Power $299**: H100優先、予約実行、長時間セッション、サポート
+
+**要するに**、AIXSは**“研究SaaS”部分と“GPU原価”部分を分離**した方が機能します。今のままだと、  
+- Freeは**原価が重い**  
+- Proは**H100含有量が多すぎる**  
+- ARPU/LTVは**やや楽観的**  
+です。  
+逆に、**Starter中心 + 従量課金 + 学術認証フリー**に寄せれば、かなり現実的になります。 ([huggingface.co](https://huggingface.co/pricing))
+
+補足：**純粋な「研究者向けSaaS」の実ARPU公開値は、主要プレイヤーの多くが非上場/非開示のため薄い**です。今回はそのため、**公開されている実価格（Overleaf/HF/W&B/Comet）**と、**ChartMogul/OpenViewのSaaSベンチマーク**で近似評価しました。
