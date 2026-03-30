@@ -59,11 +59,11 @@ Core42 (G42)
 | HF Inference (GCP経由) | $10.00 | なし | なし | 分 |
 | Azure (ND96isr_H100_v5, 1GPU換算) | $12.29 | $2.27 | 要セールス | 秒(5min min) |
 
-出典: 各社公式サイト (2025-03〜2026-03)。詳細は [COMPETITOR_ANALYSIS.md](./COMPETITOR_ANALYSIS.md) Section 2.1
+出典: 各社公式サイト (2025-03〜2026-03)。詳細は [COMPETITOR_ANALYSIS.md](./reports/COMPETITOR_ANALYSIS.md) Section 2.1
 
 ### 研究者の実利用シナリオ別コスト
 
-条件: H100 1台、ストレージ500GB、egress 100GB。出典: [COMPETITOR_ANALYSIS.md](./COMPETITOR_ANALYSIS.md) Section 2.2
+条件: H100 1台、ストレージ500GB、egress 100GB。出典: [COMPETITOR_ANALYSIS.md](./reports/COMPETITOR_ANALYSIS.md) Section 2.2
 
 | プロバイダー | 72時間 (論文再現) | 1週間 (ファインチューニング) | 月160時間 (月間研究) | 8GPU x 30日 (大規模学習) |
 |---|---|---|---|---|
@@ -82,7 +82,7 @@ Core42 (G42)
 
 ### 金額以外のメリット・デメリット
 
-評価凡例: ◎=優秀 ○=良好 △=制限あり ×=未対応。出典: [COMPETITOR_ANALYSIS.md](./COMPETITOR_ANALYSIS.md) Section 3.1
+評価凡例: ◎=優秀 ○=良好 △=制限あり ×=未対応。出典: [COMPETITOR_ANALYSIS.md](./reports/COMPETITOR_ANALYSIS.md) Section 3.1
 
 | プロバイダー | 即時利用 | GPU在庫 | Notebook | CLI/API | 分散学習 | 課金柔軟性 | 日本語 | ロックイン |
 |---|---|---|---|---|---|---|---|---|
@@ -130,7 +130,7 @@ Core42 (G42)
 
 **日本国内プロバイダの共通特徴:** 全社がインフラ提供のみ。マネージドMLプラットフォーム（ノートブック+学習+推論+実験管理の統合）を提供する事業者は2026年3月時点で存在しない。
 
---> 詳細: [COMPETITOR_ANALYSIS.md](./COMPETITOR_ANALYSIS.md)
+--> 詳細: [COMPETITOR_ANALYSIS.md](./reports/COMPETITOR_ANALYSIS.md)
 
 ---
 
@@ -277,7 +277,7 @@ Core42 (G42)
 
 **台湾** -- NCHC 1,700+ GPU (H200+GB200+B300)。Foxconn 10,000 Blackwell GPU ($1.37B)。NT$190B 4年計画。TSMC製造拠点 (先端GPU ダイの80%超) だが国内計算基盤を構築中。エネルギー供給制約がリスク。
 
---> 詳細: [MARKET_RESEARCH.md](./MARKET_RESEARCH.md)
+--> 詳細: [MARKET_RESEARCH.md](./reports/MARKET_RESEARCH.md)
 
 ---
 
@@ -285,12 +285,12 @@ Core42 (G42)
 
 | ファイル | 内容 |
 |---|---|
-| [COMPETITOR_ANALYSIS.md](./COMPETITOR_ANALYSIS.md) | 30社の価格・機能・財務データ比較。H100/H200/A100/L40S/B200/MI300X全GPU価格表、メリット・デメリット詳細 |
-| [MARKET_RESEARCH.md](./MARKET_RESEARCH.md) | 13地域のGPU利用実態。利用経路、資金源、政府施策、出典URL一覧 |
-| [gpt54pro_price_comparison.md](./gpt54pro_price_comparison.md) | 16社x4シナリオのGPU価格比較、研究者ペルソナ別年間コスト |
-| [gpt54pro_regional_gpu_usage.md](./gpt54pro_regional_gpu_usage.md) | 地域別GPU利用実態の補足調査 (GPT-5.4-pro) |
-| [gpt54pro_comprehensive_analysis.md](./gpt54pro_comprehensive_analysis.md) | Big Tech統合動向分析 (AWS/Google/Microsoft/NVIDIA) |
-| [citation_verification.md](./citation_verification.md) | 主要30クレームの出典URL検証、矛盾データ5件の原因分析 |
+| [COMPETITOR_ANALYSIS.md](./reports/COMPETITOR_ANALYSIS.md) | 30社の価格・機能・財務データ比較。H100/H200/A100/L40S/B200/MI300X全GPU価格表、メリット・デメリット詳細 |
+| [MARKET_RESEARCH.md](./reports/MARKET_RESEARCH.md) | 13地域のGPU利用実態。利用経路、資金源、政府施策、出典URL一覧 |
+| [gpt54pro_price_comparison.md](./gpt54pro/gpt54pro_price_comparison.md) | 16社x4シナリオのGPU価格比較、研究者ペルソナ別年間コスト |
+| [gpt54pro_regional_gpu_usage.md](./gpt54pro/gpt54pro_regional_gpu_usage.md) | 地域別GPU利用実態の補足調査 (GPT-5.4-pro) |
+| [gpt54pro_comprehensive_analysis.md](./gpt54pro/gpt54pro_comprehensive_analysis.md) | Big Tech統合動向分析 (AWS/Google/Microsoft/NVIDIA) |
+| [citation_verification.md](./review/citation_verification.md) | 主要30クレームの出典URL検証、矛盾データ5件の原因分析 |
 
 ## 調査手法
 

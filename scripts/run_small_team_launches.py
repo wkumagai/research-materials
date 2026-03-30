@@ -1,11 +1,19 @@
 #!/usr/bin/env python3
 """Research small-team startup launches using GPT-5.4-pro with streaming Responses API."""
 
+import os
 import sys
 import time
+from dotenv import load_dotenv
 from openai import OpenAI
 
-API_KEY = "os.environ.get("OPENAI_API_KEY")"
+# Load API key from secrets
+load_dotenv("/Users/kumacmini/Library/CloudStorage/Dropbox/secrets/.env")
+API_KEY = os.environ.get("OPENAI_API_KEY")
+if not API_KEY:
+    print("ERROR: OPENAI_API_KEY not found", flush=True)
+    sys.exit(1)
+
 OUTPUT_PATH = "/Users/kumacmini/research-materials/gpt54pro_small_team_launches.md"
 
 QUERY = """少人数（1-5人）のスタートアップで、初期の立ち上げに成功したAI/DevTools/GPUクラウド企業の事例を調べてください。大型資金調達前の「ローンチ前〜初期」にフォーカスしてください。Web検索で具体的データを集めてください。
@@ -53,7 +61,7 @@ def main():
     client = OpenAI(api_key=API_KEY, timeout=1800)
 
     print("Starting GPT-5.4-pro streaming query (with web_search_preview)...", flush=True)
-    print("This may take several minutes as the model performs web searches.\n", flush=True)
+    print("This may take 10-30 minutes as the model performs extensive web searches.\n", flush=True)
     start_time = time.time()
 
     try:
@@ -70,18 +78,31 @@ def main():
         text = ""
         chunk_count = 0
         event_count = 0
+        last_log_time = start_time
+
         for event in stream:
             event_count += 1
             event_type = getattr(event, "type", "unknown")
+            now = time.time()
 
-            if event_count <= 10 or event_count % 100 == 0:
-                print(f"  [{time.time()-start_time:.1f}s] Event #{event_count}: {event_type}", flush=True)
+            # Log first 10, every 100th, and key event types, or every 60s
+            should_log = (
+                event_count <= 10
+                or event_count % 100 == 0
+                or "error" in event_type
+                or "completed" in event_type
+                or "failed" in event_type
+                or now - last_log_time >= 60
+            )
+            if should_log:
+                print(f"  [{now - start_time:.1f}s] Event #{event_count}: {event_type}", flush=True)
+                last_log_time = now
 
             if event_type == "response.output_text.delta":
                 text += event.delta
                 chunk_count += 1
                 if chunk_count % 100 == 0:
-                    elapsed = time.time() - start_time
+                    elapsed = now - start_time
                     print(f"  ... received {chunk_count} text chunks, {len(text)} chars, {elapsed:.0f}s elapsed", flush=True)
 
         elapsed = time.time() - start_time
@@ -105,9 +126,19 @@ def main():
 
     except Exception as e:
         elapsed = time.time() - start_time
-        print(f"\n[{elapsed:.1f}s] ERROR: {type(e).__name__}: {e}", file=sys.stderr, flush=True)
+        print(f"\n[{elapsed:.1f}s] ERROR: {type(e).__name__}: {e}", flush=True)
         import traceback
-        traceback.print_exc()
+        traceback.print_exc(file=sys.stdout)
+        # Save partial result if available
+        if text:
+            with open(OUTPUT_PATH, "w", encoding="utf-8") as f:
+                f.write(f"# Small-Team Startup Launch Research (GPT-5.4-pro) [PARTIAL]\n\n")
+                f.write(f"> Generated: {time.strftime('%Y-%m-%d %H:%M:%S')}\n")
+                f.write(f"> Model: gpt-5.4-pro with web_search_preview\n")
+                f.write(f"> Duration: {elapsed:.1f}s (PARTIAL - error occurred)\n\n")
+                f.write("---\n\n")
+                f.write(text)
+            print(f"\nPartial result saved to: {OUTPUT_PATH} ({len(text)} chars)", flush=True)
         sys.exit(1)
 
 
