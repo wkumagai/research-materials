@@ -1,35 +1,29 @@
-# GPU クラウド競合分析・市場調査
+# GPUクラウド競合分析・市場調査
 
-調査日: 2026-03-28〜29
-データ期間: 2024年後半〜2026年3月
-為替参考: 1 USD = 150 JPY, 1 EUR = 1.08 USD
+**調査日:** 2026年3月28日〜29日
+**データ期間:** 2024年後半〜2026年3月
+**為替参考:** 1ドル＝150円、1ユーロ＝1.08ドル
 
 ---
 
 ## 1. 競合分析
 
-### 対象企業（30社）
+### 調査対象企業（30社）
 
-**ハイパースケーラー（4社）**
-AWS, Google Cloud (GCP), Microsoft Azure, Oracle Cloud (OCI)
-
-**GPU特化クラウド（11社）**
-CoreWeave, Lambda Labs, RunPod, Modal, Together AI, Crusoe, FluidStack, Hyperstack, Lightning AI, Brev.dev, Spheron
-
-**マーケットプレイス（1社）**
-Vast.ai
-
-**推論・サーバーレス・エコシステム（4社）**
-Baseten, Replicate, Hugging Face, Paperspace / DigitalOcean GPU Droplets
-
-**欧州ネオクラウド（4社）**
-Nscale, Scaleway, OVHcloud, Nebius
-
-**日本国内（5社）**
-さくらインターネット, GPUSOROBAN (ハイレゾ), GMO GPU Cloud, WebARENA IndigoGPU (NTTPC), ABCI 3.0 (産総研)
-
-**中東（1社）**
-Core42 (G42)
+*   **ハイパースケーラー（4社）**
+    AWS、Google Cloud (GCP)、Microsoft Azure、Oracle Cloud (OCI)
+*   **GPU特化クラウド（11社）**
+    CoreWeave、Lambda Labs、RunPod、Modal、Together AI、Crusoe、FluidStack、Hyperstack、Lightning AI、Brev.dev、Spheron
+*   **マーケットプレイス（1社）**
+    Vast.ai
+*   **推論・サーバーレス・エコシステム（4社）**
+    Baseten、Replicate、Hugging Face、Paperspace / DigitalOcean GPU Droplets
+*   **欧州ネオクラウド（4社）**
+    Nscale、Scaleway、OVHcloud、Nebius
+*   **日本国内（5社）**
+    さくらインターネット、GPUSOROBAN (ハイレゾ)、GMO GPU Cloud、WebARENA IndigoGPU (NTTPC)、ABCI 3.0 (産総研)
+*   **中東（1社）**
+    Core42 (G42)
 
 ### H100 価格比較（1GPU・1時間あたり、オンデマンド）
 
@@ -59,11 +53,10 @@ Core42 (G42)
 | HF Inference (GCP経由) | $10.00 | なし | なし | 分 |
 | Azure (ND96isr_H100_v5, 1GPU換算) | $12.29 | $2.27 | 要セールス | 秒(5min min) |
 
-出典: 各社公式サイト (2025-03〜2026-03)。詳細は [COMPETITOR_ANALYSIS.md](./reports/COMPETITOR_ANALYSIS.md) Section 2.1
+*出典: 各社公式サイト (2025-03〜2026-03)。詳細は [COMPETITOR_ANALYSIS.md](./reports/COMPETITOR_ANALYSIS.md) Section 2.1*
 
-### 研究者の実利用シナリオ別コスト
-
-条件: H100 1台、ストレージ500GB、egress 100GB。出典: [COMPETITOR_ANALYSIS.md](./reports/COMPETITOR_ANALYSIS.md) Section 2.2
+### 研究者の実利用シナリオ別コスト比較
+*条件: H100 1台、ストレージ500GB、egress（データ転送料） 100GB。*
 
 | プロバイダー | 72時間 (論文再現) | 1週間 (ファインチューニング) | 月160時間 (月間研究) | 8GPU x 30日 (大規模学習) |
 |---|---|---|---|---|
@@ -80,9 +73,10 @@ Core42 (G42)
 | AWS | $508 | $1,192 | $1,181 | $40,508 |
 | GCP | $821 | $1,919 | $1,863 | $64,971 |
 
-### 金額以外のメリット・デメリット
+*出典: [COMPETITOR_ANALYSIS.md](./reports/COMPETITOR_ANALYSIS.md) Section 2.2*
 
-評価凡例: ◎=優秀 ○=良好 △=制限あり ×=未対応。出典: [COMPETITOR_ANALYSIS.md](./reports/COMPETITOR_ANALYSIS.md) Section 3.1
+### 金額以外のメリット・デメリット
+*評価凡例: ◎=優秀 ○=良好 △=制限あり ×=未対応。*
 
 | プロバイダー | 即時利用 | GPU在庫 | Notebook | CLI/API | 分散学習 | 課金柔軟性 | 日本語 | ロックイン |
 |---|---|---|---|---|---|---|---|---|
@@ -102,42 +96,29 @@ Core42 (G42)
 | GPUSOROBAN | ○ | ○ | △ | △ | △ | ○ | ◎ | ○ |
 | ABCI 3.0 | △ | ◎ | △ | △ | ◎ | △ | ◎ | △ |
 
-### 各社の主な特徴
+*出典: [COMPETITOR_ANALYSIS.md](./reports/COMPETITOR_ANALYSIS.md) Section 3.1*
 
-**AWS** -- SageMakerで学習・追跡・デプロイが統合。143+認定。2025年6月にH100を44%値下げ。ただしオンデマンド価格はGPU特化勢の2-3倍。クォータ申請が必要で容量不足エラーが頻発。サービス間ロックインが大きい。
+### 各社の特徴
 
-**GCP** -- Colab Enterprise連携。TPU v5e/v5p/v6が独自の強み。NVIDIA GPUのオンデマンド価格は最高値帯。
+*   **AWS** -- SageMaker（機械学習プラットフォーム）により、学習・追跡・デプロイが統合されています。143以上の認定を保持。2025年6月にH100の価格を44%引き下げましたが、依然としてオンデマンド価格は特化勢の2〜3倍です。利用にはクォータ（上限）申請が必要で、エラーも頻発します。サービス間の依存度（ベンダーロックイン）が非常に高い傾向にあります。
+*   **GCP** -- Colab Enterpriseと連携した開発環境が特徴。TPU v5e/v5p/v6という自社チップが強みです。NVIDIA GPUのオンデマンド価格は最高水準です。
+*   **Azure** -- ND H100 v5とInfiniBand（高速ネットワーク）を組み合わせ、大規模な分散学習を得意とします。企業のIT環境（EA、AD、Office 365など）との統合性が高く、5分単位での課金となります。階層構造が複雑です。
+*   **CoreWeave** -- Kubernetes（コンテナ管理ツール）ネイティブのサービス。3200GbpsのInfiniBandを提供。egressやIOPS（データの入出力速度）は無料です。SOC 2 Type II、ISO 27001、HIPAA（医療情報規格）に対応しています。2025年にWeights & Biasesを買収。最低8GPUの構成が必要で、Kubernetesの知識が不可欠です。2025年度の売上は51.3億ドルです。
+*   **Lambda Labs** -- JupyterLabがプリインストールされており、SSHですぐに利用可能です。「1-Click Clusters」で16〜2000以上のGPUを短時間で構築できます。egressは無料ですが、在庫不足が常態化しています。Spot価格や予約プランはなく、東京リージョンも非対応です。推定ARR（年間経常収益）は5億ドルを超えています。
+*   **RunPod** -- H100 PCIeを1.99ドル/時間から提供する市場最安級のサービスです。秒単位の課金に対応し、FlashBoot機能で2秒未満のコールドスタート（起動待ち）を実現します。コミュニティ主導の環境は信頼性にバラつきがあり、GPUの品切れも報告されます。ARRは1億2000万ドルを超え、50万人以上の開発者が利用しています。
+*   **Modal** -- PythonベースのSDKにより、サブ秒でのコールドスタートを実現し、アイドル時の待機コストがゼロです。InfiniBand 3200Gbpsも提供中（ベータ版）。Spot価格や予約設定はありません。セッション終了時にボリューム（ストレージ）が削除されるため、Modal SDKへの依存が生まれます。評価額は11億ドル（Series B 8700万ドル調達）。
+*   **Together AI** -- FlashAttentionなどの高速化技術を導入し、200以上のモデルに対応。「Instant Clusters」により8〜64GPUを即時利用可能です。Web UIが中心で、ノートブック環境はベータ版です。A100やL40Sは直接提供していません。Series Bで3億500万ドルを調達済み。
+*   **Vast.ai** -- P2P（ピアツーピア）のマーケットプレイス方式で、秒単位の課金を行います。ホストの品質や在庫は不安定ですが、2026年3月に月間売上が100万ドルを突破しました。システム手数料は25%です。
+*   **さくらインターネット** -- H100/H200の物理サーバーおよびVM（仮想マシン）プランを提供。ISMAP（政府情報システムのためのセキュリティ評価制度）認定を取得済みです。DOK（高火力コンテナ）は2.50ドル/GPU-hr程度まで値下げされ、国際競争力があります。ML専門の機能は備えておらず、VRT（仮想サーバー）は990円/時間です。政府から5010億円の補助金を受けています。
+*   **GPUSOROBAN** -- 国内最安級のA100 80GB（398円/時間＝約2.65ドル/時間）が強み。日本語サポートが充実していますが、APIや実験管理ツールなどの整備はこれからです。
+*   **ABCI 3.0** -- 6,128基のH200を誇る国内最大規模の計算資源（6.22 EFLOPS）。学術目的向けの低価格提供が特徴です。利用には事前審査とキュー待ちが必要で、即時の使い出しはできません。クレジットカード支払いは不可です。約3,000人のユーザーが利用しています。
+*   **日本国内プロバイダの共通特徴:** すべてインフラの提供に特化しています。ノートブック、学習、推論、実験管理までを統合したマネージドMLプラットフォームを提供する事業者は、2026年3月時点で国内には存在しません。
 
-**Azure** -- ND H100 v5 + InfiniBandで大規模分散が容易。エンタープライズ統合 (EA, AD, Office 365)。5分最低課金。サービス階層が複雑。
-
-**CoreWeave** -- K8s native。InfiniBand 3200Gbps。egress/IOPS無料。SOC 2 Type II, ISO 27001, HIPAA対応。2025年にW&Bを~$1.7Bで買収。8-GPU最小、K8s知識が前提。FY2025売上$5.131B。
-
-**Lambda Labs** -- JupyterLabプリインストール、SSH即利用。1-Click Clusters (16-2000+ GPU)。egress無料。在庫不足が頻発。Spot/予約なし。東京リージョンなし。推定ARR $500M+。
-
-**RunPod** -- H100 PCIe $1.99/hrで市場最安級。秒課金。FlashBoot (<2秒コールドスタート)。Community Cloudは信頼性にばらつき。GPU枯渇報告あり。ARR $120M+、50万人超の開発者。
-
-**Modal** -- Python-native SDKでサブ秒コールドスタート。ゼロアイドルコスト。InfiniBand 3200Gbps (beta)。Spot/予約なし。セッション終了でボリューム削除。Modal SDKへのロックインあり。Series B $87M / $1.1B評価。
-
-**Together AI** -- FlashAttention、200+モデル。Instant Clusters (8-64 GPU)。Web UI中心でNotebookはベータ。A100/L40S直接提供なし。Series B $305M。
-
-**Vast.ai** -- P2Pマーケットプレイスで秒課金。ホスト品質と在庫が不安定。月間売上初$1M超 (2026-03)。手数料率25%。
-
-**さくらインターネット** -- H100/H200の物理・VM両プラン。ISMAP認定。DOKが~$2.50/GPU-hrに値下げで国際競争力あり。ML機能なし。VRTは¥990/hr。METI補助金¥501B。
-
-**GPUSOROBAN** -- 国内最安級A100 80GB ¥398/hr ($2.65/hr)。日本語サポート充実。API・実験管理が未整備。
-
-**ABCI 3.0** -- 6,128 H200で国内最大規模 (6.22 EFLOPS)。学術価格。事前審査とキュー待ちで即時利用不可。カード払い不可。約3,000ユーザー。
-
-**日本国内プロバイダの共通特徴:** 全社がインフラ提供のみ。マネージドMLプラットフォーム（ノートブック+学習+推論+実験管理の統合）を提供する事業者は2026年3月時点で存在しない。
-
---> 詳細: [COMPETITOR_ANALYSIS.md](./reports/COMPETITOR_ANALYSIS.md)
-
----
+*詳細: [COMPETITOR_ANALYSIS.md](./reports/COMPETITOR_ANALYSIS.md)*
 
 ## 2. 市場調査
 
 ### 対象地域
-
 アメリカ、EU、UK、中国、日本、カナダ、韓国、インド、UAE、サウジアラビア、シンガポール、イスラエル、台湾
 
 ### 地域別サマリー
@@ -161,93 +142,89 @@ Core42 (G42)
 ### 地域別詳細
 
 #### アメリカ
-
 **GPU利用経路**
-- ハイパースケーラー: AWS 28%、Azure 21%、GCP 14%で上位3社合計68%。AWS Bedrock 10万超組織、Azure AI Foundry 8万社
-- ネオクラウド: 全体で2025年売上$23B超 (前年比205%成長)。CoreWeave $5.131B、RunPod ARR $120M+、Lambda 15万Cloud users
-- 大学クラスター: UT Austin 5,000+ GPU、MIT 1,542+基、Stanford 440+基、CMU 296 H100
-- 公的基盤: NAIRR 累計14.2M GPU-hours、ACCESS 7,022ユーザー、DOE Frontier 37,000+ MI250X
-- 個人: Google Colab 1,000万超MAU、Kaggle 2,500万登録ユーザー
+*   ハイパースケーラー（大規模クラウド事業者）: AWS 28%、Azure 21%、GCP 14%で上位3社合計68%。AWS Bedrock 10万超組織、Azure AI Foundry 8万社
+*   ネオクラウド（AIに特化した新興クラウド）: 全体で2025年売上$23B超 (前年比205%成長)。CoreWeave $5.131B、RunPod ARR $120M+、Lambda 15万Cloud users
+*   大学クラスター: UT Austin 5,000+ GPU、MIT 1,542+基、Stanford 440+基、CMU 296 H100
+*   公的基盤: NAIRR（国家AI研究リソース） 累計14.2M GPU-hours、ACCESS 7,022ユーザー、DOE Frontier 37,000+ MI250X
+*   個人: Google Colab 1,000万超MAU、Kaggle 2,500万登録ユーザー
 
 **資金源**
-- VC: 2025年米国AI VC約$194B (世界の75%)
-- 企業capex: Microsoft $80B、Meta $66-72B、Alphabet $85B、Amazon $100B+の4社合計$330B+
-- 公的研究費: CloudBank 2.0 $20M/5年、NAIRR累計14.2M GPU-hours
-- 大学予算: Stanford Marlowe $30M、MIT ORCD $6.5M、UT Austin $20M
-- スタートアップクレジット: AWS Activate累計$7B、Google最大$350K/社
+*   VC（ベンチャーキャピタル）: 2025年米国AI VC約$194B (世界の75%)
+*   企業capex（設備投資）: Microsoft $80B、Meta $66-72B、Alphabet $85B、Amazon $100B+の4社合計$330B+
+*   公的研究費: CloudBank 2.0 $20M/5年、NAIRR累計14.2M GPU-hours
+*   大学予算: Stanford Marlowe $30M、MIT ORCD $6.5M、UT Austin $20M
+*   スタートアップクレジット: AWS Activate累計$7B、Google最大$350K/社
 
 **政府施策**
-- NAIRR: 14連邦機関・28民間パートナー。600+プロジェクト、6,000学生
-- ACCESS: 無料。申請は多くが24-48時間で承認
-- DOE Genesis Mission: $320M超投資 (2025年11月開始)
-- CHIPS Act: R&D Office $11B管理
-- CalCompute: SB 53 (2025年9月成立)、14コンソーシアム。2027年1月までに設計報告
+*   NAIRR: 14連邦機関・28民間パートナー。600+プロジェクト、6,000学生
+*   ACCESS: 無料。申請は多くが24-48時間で承認
+*   DOE Genesis Mission: $320M超投資 (2025年11月開始)
+*   CHIPS Act: R&D Office $11B管理
+*   CalCompute: SB 53 (2025年9月成立)、14コンソーシアム。2027年1月までに設計報告
 
 #### EU
-
 **GPU利用経路**
-- ハイパースケーラー: 欧州市場の70%。欧州事業者合算15% (SAP 2%、Deutsche Telekom 2%等)
-- EuroHPC: LUMI 11,912 MI250X、Leonardo 13,824 A100、MareNostrum 5 ACC 4,480 H100、JUPITER ~24,000 GH200
-- 欧州ネオクラウド: Nscale (2027年に10万超GPU)、Nebius (~30,000 GPU)、OVHcloud (50万超サーバー)、Scaleway (最大1,016 H100)
-- データ主権対応: Microsoft EU Data Boundary完了、AWS European Sovereign Cloud (2026年1月GA)
+*   ハイパースケーラー: 欧州市場の70%。欧州事業者合算15% (SAP 2%、Deutsche Telekom 2%等)
+*   EuroHPC（欧州ハイパフォーマンス計算共同事業）: LUMI 11,912 MI250X、Leonardo 13,824 A100、MareNostrum 5 ACC 4,480 H100、JUPITER ~24,000 GH200
+*   欧州ネオクラウド: Nscale (2027年に10万超GPU)、Nebius (~30,000 GPU)、OVHcloud (50万超サーバー)、Scaleway (最大1,016 H100)
+*   データ主権対応: Microsoft EU Data Boundary完了、AWS European Sovereign Cloud (2026年1月GA)
 
 **資金源**
-- Horizon Europe: 総額EUR 93.5B (2021-2027)、AI R&D約EUR 2B
-- InvestAI: EUR 200B動員目標
-- EuroHPC全体: 2021-2027でEUR 10B
-- EU AI VC投資: $15.8B (2025年、世界の6%)
-- フランスAI投資: EUR 109B。ドイツ技術イニシアティブ: EUR 5.5B
+*   Horizon Europe: 総額EUR 93.5B (2021-2027)、AI R&D約EUR 2B
+*   InvestAI: EUR 200B動員目標
+*   EuroHPC全体: 2021-2027でEUR 10B
+*   EU AI VC投資: $15.8B (2025年、世界の6%)
+*   フランスAI投資: EUR 109B。ドイツ技術イニシアティブ: EUR 5.5B
 
 **政府施策**
-- EuroHPC AI Factories: 19拠点+13 Antennas。SME/スタートアップ無料 (Playground 2営業日、Fast Lane最大50,000 GPUh)
-- EU AI Act: GPAI obligations 2025年8月適用開始。10^25 FLOP超モデルはsystemic risk推定。研究exemptionあり
-- GDPR/データ越境: 医療・公共・防衛・金融でGPU調達先にデータ所在地要件
-- GAIA-X: federated system/verification framework。欧州委員会EUR 180M Cloud Sovereignty Framework
+*   EuroHPC AI Factories: 19拠点+13 Antennas。SME/スタートアップ無料 (Playground 2営業日、Fast Lane最大50,000 GPUh)
+*   EU AI Act: GPAI（汎用AI） obligations 2025年8月適用開始。10^25 FLOP超モデルはsystemic risk推定。研究exemptionあり
+*   GDPR/データ越境: 医療・公共・防衛・金融でGPU調達先にデータ所在地要件
+*   GAIA-X: federated system/verification framework（連合型システム／検証フレームワーク）。欧州委員会EUR 180M Cloud Sovereignty Framework
 
 #### 中国
-
 **GPU利用経路**
-- 国内クラウド: Alibaba 35.8%、Volcano Engine 14.8%、Huawei 13.1%、Tencent 7.0%、Baidu 6.1% (IaaS+PaaS+MaaS)
-- 智算中心: 788 EFLOPS (2025年6月)、2025年末に1,037 EFLOPS予測。30+都市が建設中
-- 企業備蓄: Alibaba $52.9B/3年、ByteDance $20B、DeepSeek 50,000 Hopper + 10,000 A100
-- 国産GPU: Huawei Ascend 910C (推論約60% H100比)、Cambricon Siyuan 590、Baidu Kunlun P800
-- GPU稼働率問題: 約30%。H100レンタル価格$8/hr (2023年) --> <$2/hr (2024年)、70%暴落
+*   国内クラウド: Alibaba 35.8%、Volcano Engine 14.8%、Huawei 13.1%、Tencent 7.0%、Baidu 6.1% (IaaS+PaaS+MaaS)
+*   智算中心（AI計算センター）: 788 EFLOPS (2025年6月)、2025年末に1,037 EFLOPS予測。30+都市が建設中
+*   企業備蓄: Alibaba $52.9B/3年、ByteDance $20B、DeepSeek 50,000 Hopper + 10,000 A100
+*   国産GPU: Huawei Ascend 910C (推論約60% H100比)、Cambricon Siyuan 590、Baidu Kunlun P800
+*   GPU稼働率問題: 約30%。H100レンタル価格$8/hr (2023年) --> <$2/hr (2024年)、70%暴落
 
 **資金源**
-- 国家基金: RMB 1T ($138B) 20年ガイダンスファンド、AI産業投資基金RMB 60B、Big Fund III $47B (半導体)
-- 企業R&D: $70B+ (2025年、トップインターネット企業)
-- 算力券: 30+都市。上海RMB 600M (最大80%補助)、深圳RMB 500M (50%)、北京 (最大20%)
-- AI VC: RMB 287B (AIスタートアップ、2025年)。中国AI投資総額RMB 890B ($125B、世界の38%)
+*   国家基金: RMB 1T ($138B) 20年ガイダンスファンド、AI産業投資基金RMB 60B、Big Fund III $47B (半導体)
+*   企業R&D: $70B+ (2025年、トップインターネット企業)
+*   算力券（計算能力利用クーポン）: 30+都市。上海RMB 600M (最大80%補助)、深圳RMB 500M (50%)、北京 (最大20%)
+*   AI VC: RMB 287B (AIスタートアップ、2025年)。中国AI投資総額RMB 890B ($125B、世界の38%)
 
 **政府施策**
-- 东数西算: 8国家計算ハブ、10 DCクラスター。総駆動投資RMB 200B超
-- 2025年「AI+」イニシアティブ: 6重要領域でAI統合、2030年に90%超目標
-- 国産GPU義務化: 政府支援データセンターは国産チップのみ使用義務。省政府は最大50%電力補助
-- 米国輸出規制下: 2022年10月A100/H100停止、2025年4月H20停止。海外GPU租借 (SG/MY/ID経由) が抜け穴として存在
+*   东数西算（東数西算プロジェクト）: 8国家計算ハブ、10 DCクラスター。総駆動投資RMB 200B超
+*   2025年「AI+」イニシアティブ: 6重要領域でAI統合、2030年に90%超目標
+*   国産GPU義務化: 政府支援データセンターは国産チップのみ使用義務。省政府は最大50%電力補助
+*   米国輸出規制下: 2022年10月A100/H100停止、2025年4月H20停止。海外GPU租借 (SG/MY/ID経由) が抜け穴として存在
 
 #### 日本
-
 **GPU利用経路**
-- ハイパースケーラー (~60%): AWS $15.2B日本投資 (by 2027)、Azure $2.9B、GCP $730M+
-- 国内クラウド: さくらDOK ~$2.50/GPU-hr、GPUSOROBAN A100 ¥398/hr、GMO H200共用 ¥6,000/hr
-- ABCI 3.0: 6,128 H200 (6.22 EFLOPS)、約3,000ユーザー
-- 大学: 8中核機関 (北海道大〜九州大)、Miyabi (東大+筑波大、GH200)、mdx 320x A100 (¥50/hr)
-- 個人・学生: Google Colab、mdx ¥50/hr、ABCI (研究機関所属が条件)
+*   ハイパースケーラー (~60%): AWS $15.2B日本投資 (by 2027)、Azure $2.9B、GCP $730M+
+*   国内クラウド: さくらDOK ~$2.50/GPU-hr、GPUSOROBAN A100 ¥398/hr、GMO H200共用 ¥6,000/hr
+*   ABCI 3.0: 6,128 H200 (6.22 EFLOPS)、約3,000ユーザー
+*   大学: 8中核機関 (北海道大〜九州大)、Miyabi (東大+筑波大、GH200)、mdx 320x A100 (¥50/hr)
+*   個人・学生: Google Colab、mdx ¥50/hr、ABCI (研究機関所属が条件)
 
 **資金源**
-- METI FY2026 AI・半導体予算: ¥1.23T ($7.9B)、前年比4倍増
-- METI Cloud Program: ¥1,146B+の補助 (さくら¥501B、ソフトバンク¥421B、KDDI ¥102.4B等)
-- 科研費 (KAKENHI): ¥237.9B/年。個別¥5M (若手) 〜¥200M+ (特別推進)
-- GENIAC: ~¥33.9B累計 (30+プロジェクト)。補助率最大2/3
-- 企業R&D: ¥23T (FY2024、過去最高)
-- VC: 2024年総額¥779.3B
+*   METI（経済産業省） FY2026 AI・半導体予算: ¥1.23T ($7.9B)、前年比4倍増
+*   METI Cloud Program: ¥1,146B+の補助 (さくら¥501B、ソフトバンク¥421B、KDDI ¥102.4B等)
+*   科研費 (KAKENHI): ¥237.9B/年。個別¥5M (若手) 〜¥200M+ (特別推進)
+*   GENIAC: ~¥33.9B累計 (30+プロジェクト)。補助率最大2/3
+*   企業R&D: ¥23T (FY2024、過去最高)
+*   VC: 2024年総額¥779.3B
 
 **政府施策**
-- ABCI 3.0: 国内最大の政府AI計算基盤。LLM開発支援、大規模生成AI開発支援プログラム
-- GENIAC: 2024年2月開始。Phase 1-3で30+プロジェクト
-- METI Cloud Program: 経済安全保障推進法でクラウドを特定重要物資に分類。¥1,146B+補助
-- 国家AI基本計画: 2025年12月閣議決定。¥1T/5年。1兆パラメータ国内基盤モデル目標
-- 富岳NEXT: 日本初のGPU搭載フラッグシップスパコン (2029-2030年)。¥73B FY2025予算
+*   ABCI 3.0: 国内最大の政府AI計算基盤。LLM開発支援、大規模生成AI開発支援プログラム
+*   GENIAC: 2024年2月開始。Phase 1-3で30+プロジェクト
+*   METI Cloud Program: 経済安全保障推進法でクラウドを特定重要物資に分類。¥1,146B+補助
+*   国家AI基本計画: 2025年12月閣議決定。¥1T/5年。1兆パラメータ国内基盤モデル目標
+*   富岳NEXT: 日本初のGPU搭載フラッグシップスパコン (2029-2030年)。¥73B FY2025予算
 
 **研究者の典型的なGPU利用パターン**
 
@@ -259,23 +236,55 @@ Core42 (G42)
 | 大企業 | オンプレDGX / プライベートクラウド | 国内GPUクラウド | 企業R&D予算 |
 | 個人/学生 | Google Colab / 消費者GPU | mdx (¥50/hr) | 自費 / 奨学金 |
 
-#### その他の地域
+### その他の地域
 
-**カナダ** -- Digital Research Alliance (旧Compute Canada) が全国共有計算基盤を運営。Pan-Canadian AI Strategy $2.4B+$443M。Mila (モントリオール) が研究の中核。米国市場に準拠した利用パターン。
+**カナダ**
+*   **運営体制:** Digital Research Alliance (旧Compute Canada) が全国の共有計算基盤を運営。
+*   **予算:** Pan-Canadian AI Strategyで24億ドル（$2.4B）＋4億4300万ドル（$443M）を投じています。
+*   **中核:** モントリオールのMilaが研究の中心拠点です。
+*   **市場:** 米国市場に合わせた利用パターンとなっています。
 
-**韓国** -- 2026年AI予算KRW 10.1T ($7.3B、前年比206%増)。260,000+ NVIDIA GPU確約。Samsung/SK各50,000+ GPU。NACC 1 EFLOP (2027年本格運用)。KISTI HANGANG 8,496 GPU。OpenAI Stargateの全羅南道3GW施設 ($35B)。
+**韓国**
+*   **AI予算:** 2026年のAI予算は10.1兆ウォン（73億ドル）。前年比で206％の増加です。
+*   **GPU確保:** 26万基以上のNVIDIA製GPUの導入が確約されています。SamsungとSKでそれぞれ5万基以上を割り当てています。
+*   **インフラ:** NACCが1 EFLOP（100京回/秒の計算性能）のシステムを2027年に本格稼働予定です。KISTI HANGANGには8,496基のGPUが搭載されています。
+*   **施設:** 全羅南道（チョルラナムド）にOpenAIのStargate計画による3GW（ギガワット）規模の施設が建設予定（投資額350億ドル）。
 
-**インド** -- IndiaAI Mission Rs 10,372 crore ($1.25B/5年)。38,000+ GPU政府管理下、2026年末100,000目標。補助金付GPU-hr Rs 115-150 ($1.40-$1.80) で世界最安水準。Reliance Jio 1GW AI DC建設中。
+**インド**
+*   **国家戦略:** 「IndiaAI Mission」に5年間で103億7200万ルピー（12億5000万ドル）を投資します。
+*   **GPU普及:** 政府管理下で3万8,000基以上のGPUを運用しており、2026年末までに10万基を目指しています。
+*   **低コスト:** 補助金を含めたGPUの利用料は1時間あたり115～150ルピー（1.40～1.80ドル）で、世界で最も安い水準です。
+*   **民間動向:** Reliance Jioが1GW規模のAIデータセンターを建設中です。
 
-**UAE** -- Core42ソブリンAIクラウド。Stargate UAE 1GW (G42/OpenAI/Oracle/NVIDIA等)。MGX $100B基金。US輸出許可35,000 GB300。年間500,000チップ枠を交渉中。
+**UAE（アラブ首長国連邦）**
+*   **クラウド:** Core42によるソブリンAIクラウド（国家主導のクラウド）を展開。
+*   **大規模施設:** Stargate UAE計画（G42/OpenAI/Oracle/NVIDIAなどが関与）で1GWのデータセンターを建設。
+*   **投資:** MGXファンドを1,000億ドル規模で組成。
+*   **調達:** 米国から3万5,000基のGB300チップの輸出許可を取得。年間50万チップの調達枠を交渉中です。
 
-**サウジアラビア** -- HUMAIN (PIF子会社) Phase 1: 18,000 GB300。Project Transcendence $100B。KAUST Shaheen III 2,800 GH200 (中東#1)。マルチベンダー戦略。「AIの年」2026宣言。
+**サウジアラビア**
+*   **体制:** PIF（公共投資基金）傘下のHUMAINが第1フェーズとして1万8,000基のGB300を運用。
+*   **プロジェクト:** Project Transcendenceに1,000億ドルを投資。
+*   **研究機関:** KAUST（キング・アブドゥラ科学技術大学）のShaheen IIIに2,800基のGH200を搭載し、中東で第1位の計算能力を誇ります。
+*   **方針:** 複数のメーカーから調達するマルチベンダー戦略をとり、2026年を「AIの年」と宣言しています。
 
-**シンガポール** -- NSCC ASPIRE 2A+ 20 PFLOPS。DC-CFA規制で新規容量は政府割当制。NVIDIA全球売上の15%を占有。RIE2030 S$37B。輸出規制なしでASEANハブとして機能。
+**シンガポール**
+*   **計算能力:** NSCC ASPIRE 2A+が20 PFLOPS（毎秒2京回の計算性能）を提供。
+*   **規制:** DC-CFA（データセンター建設制限）規制により、新規の容量増設は政府の割当制となっています。
+*   **市場:** NVIDIAの全世界売上の15％を占めています。
+*   **研究予算:** RIE2030計画に370億シンガポールドルを投資。輸出規制を受けないため、ASEAN地域のハブとして機能しています。
 
-**イスラエル** -- 342 GenAIスタートアップ (累計$20B+)。VC $15.6B (うちAI $7.9B)。国家AIスパコン4,000 B200 (Nebius運営)。NVIDIA R&D拠点5,000人。防衛AI $1B+。
+**イスラエル**
+*   **スタートアップ:** 生成AI企業が342社あり、累計で200億ドル以上の資金を集めました。
+*   **投資:** VC（ベンチャーキャピタル）の投資額は156億ドルで、うちAI関連が79億ドルを占めます。
+*   **インフラ:** 国家AIスパコンとして4,000基のB200を運用（Nebiusが運営）。
+*   **労働力:** NVIDIAの研究開発拠点に5,000人の従業員が在籍。防衛AIに10億ドル以上を投じています。
 
-**台湾** -- NCHC 1,700+ GPU (H200+GB200+B300)。Foxconn 10,000 Blackwell GPU ($1.37B)。NT$190B 4年計画。TSMC製造拠点 (先端GPU ダイの80%超) だが国内計算基盤を構築中。エネルギー供給制約がリスク。
+**台湾**
+*   **GPU導入:** NCHC（国家高速ネットワーク計算センター）が1,700基以上のGPU（H200/GB200/B300）を運用。
+*   **民間投資:** Foxconnが1万基のBlackwell GPUに13億7,000万ドルを投資。
+*   **政府計画:** 4年間で1,900億ニュー台湾ドルの計画を策定。
+*   **背景:** TSMCが先端GPUダイ（半導体のチップ本体）の世界シェアの8割超を製造していますが、国内の計算基盤も構築中です。電力供給の不足がリスクとなっています。
 
 --> 詳細: [MARKET_RESEARCH.md](./reports/MARKET_RESEARCH.md)
 
@@ -294,8 +303,8 @@ Core42 (G42)
 
 ## 調査手法
 
-- Claude Opus 4.6 サブエージェント
-- GPT-5.4-pro (Responses API + web_search_preview)
-- Gemini Deep Research API
-- 出典数: 500+
-- 価格データ: 2025年3月〜2026年3月時点のスナップショット。GPU価格は3-6ヶ月で大幅に変動する
+*   Claude Opus 4.6 サブエージェント
+*   GPT-5.4-pro (Responses API + web_search_preview)
+*   Gemini Deep Research API
+*   出典数: 500+
+*   価格データ: 2025年3月〜2026年3月時点のスナップショット。GPU価格は3-6ヶ月で大幅に変動します。
