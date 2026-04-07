@@ -1,0 +1,19 @@
+[NbConvertApp] Converting notebook patched_mps/SVGP_CIQ_mps.ipynb to notebook
+[NbConvertApp] Writing 34591 bytes to patched_mps/output/SVGP_CIQ_mps.ipynb
+============================================================
+SVGP_CIQ Category C Notebook Execution Report
+Timestamp: 2026-04-07T14:47:03.076500
+Device: MPS (Apple M1 Max)
+Mode: CI=true (smoke test, small synthetic data)
+Status: SUCCESS
+============================================================
+
+--- Cell 10 outputs ---
+/Users/kumacmini/repos/research-materials/gpytorch-examples/.venv/lib/python3.11/site-packages/linear_operator/utils/contour_integral_quad.py:94: UserWarning: The operator 'aten::_linalg_eigh.eigenvalues' is not currently supported on the MPS backend and will fall back to run on the CPU. This may have performance implications. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/aten/src/ATen/mps/MPSFallback.mm:34.)
+  approx_eigs = torch.linalg.eigvalsh(lanczos_mat)
+
+
+--- Cell 11 outputs ---
+Test MAE: 0.4234839975833893
+
+

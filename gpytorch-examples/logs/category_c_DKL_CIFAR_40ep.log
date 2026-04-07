@@ -1,0 +1,67 @@
+=== Category C: DKL CIFAR-10 Full Training (40 epochs) on MPS ===
+Notebook: Deep_Kernel_Learning_DenseNet_CIFAR_Tutorial (SVDKL)
+Device: Apple M1 Max (MPS)
+Dataset: CIFAR-10
+Model: DenseNet(6,6,6) + GP (SV-DKL)
+Epochs: 40
+Batch size: 256
+LR schedule: 0.1 -> 0.01 (epoch 20) -> 0.001 (epoch 30)
+Environment: PYTORCH_ENABLE_MPS_FALLBACK=1, CI not set
+
+Start time: Tue Apr  7 14:48:40 JST 2026
+End time:   Tue Apr  7 15:59:27 JST 2026
+Total wall time: 1h 10m 47s (4247s)
+CPU time: 643.68s user, 122.21s system (18% CPU utilization)
+
+Status: SUCCESS
+
+=== Test Accuracy per Epoch ===
+Epoch  1: 15.72%
+Epoch  2: 38.78%
+Epoch  3: 45.59%
+Epoch  4: 54.18%
+Epoch  5: 57.07%
+Epoch  6: 72.27%
+Epoch  7: 70.16%
+Epoch  8: 75.70%
+Epoch  9: 72.38%
+Epoch 10: 77.74%
+Epoch 11: 79.04%
+Epoch 12: 80.27%  (NumericalWarning: Negative variance, rounded to 1e-06)
+Epoch 13: 81.85%
+Epoch 14: 75.09%
+Epoch 15: 78.22%
+Epoch 16: 80.43%
+Epoch 17: 81.08%
+Epoch 18: 77.99%
+Epoch 19: 76.01%
+Epoch 20: 85.24%  <- LR drop to 0.01
+Epoch 21: 86.01%
+Epoch 22: 87.97%
+Epoch 23: 86.94%
+Epoch 24: 87.83%
+Epoch 25: 87.10%
+Epoch 26: 87.95%
+Epoch 27: 88.26%
+Epoch 28: 88.09%
+Epoch 29: 87.27%
+Epoch 30: 75.98%  <- LR drop to 0.001 (transient dip)
+Epoch 31: 86.97%
+Epoch 32: 88.37%
+Epoch 33: 88.50%  <- Peak accuracy
+Epoch 34: 87.29%
+Epoch 35: 87.80%
+Epoch 36: 87.87%
+Epoch 37: 88.46%
+Epoch 38: 86.08%
+Epoch 39: 86.46%
+Epoch 40: 87.06%
+
+=== Summary ===
+Peak test accuracy: 88.50% (epoch 33)
+Final test accuracy: 87.06% (epoch 40)
+Checkpoint saved: 06_PyTorch_NN_Integration_DKL/dkl_cifar_checkpoint.dat (3.0 MB)
+
+=== Output Files ===
+Executed notebook: patched_mps/output/DKL_CIFAR_40ep_mps.ipynb (537 KB)
+Source notebook:   patched_mps/DKL_CIFAR_40ep_mps.ipynb

@@ -1,0 +1,29 @@
+=== Category C: Deep_Sigma_Point_Processes.ipynb ===
+Date: 2026-04-07 05:47:59 UTC
+Status: SUCCESS
+Mode: CPU-only (CI=true smoke test, 1 epoch, synthetic data)
+Device: Apple M1 Max (CPU only - MPS avoided due to float64 cholesky issues)
+Runtime: ~7.8 seconds (wall clock)
+
+Notebook: 05_Deep_Gaussian_Processes/Deep_Sigma_Point_Processes.ipynb
+Patched: patched_mps/Deep_Sigma_Point_Processes_cpu.ipynb
+Output: patched_mps/output/Deep_Sigma_Point_Processes_cpu.ipynb
+
+Steps performed:
+1. Downloaded bike.mat dataset from Google Drive (435KB, Matlab v5 format)
+2. Ran patch_cuda_to_mps.py to convert CUDA references (3 cells, 6 lines modified)
+3. Replaced all "mps" references with "cpu" to avoid MPS float64 cholesky crashes
+4. Executed with CI=true (smoke test mode: 1 epoch, random synthetic data)
+
+Execution results:
+- Total code cells executed: 11
+- Cells with errors: 0
+- Data shape (smoke test): train (750, 3), test (250, 3)
+- RMSE: 1.0649913549423218 (expected to be high with 1 epoch on random data)
+- Test NLL: 1.4904983043670654
+
+Environment:
+- Python venv: /Users/kumacmini/repos/research-materials/gpytorch-examples/.venv
+- gpytorch: 1.15.2
+- torch: 2.11.0
+- scipy: 1.17.1
